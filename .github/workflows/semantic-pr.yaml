@@ -66,6 +66,7 @@ jobs:
             java
             go
             c
+            c\+\+
             elixir
             dart
             os
