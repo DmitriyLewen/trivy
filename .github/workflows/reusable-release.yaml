@@ -74,7 +74,7 @@ jobs:
           version: v1.4.1
           args: release -f=${{ inputs.goreleaser_config}} ${{ inputs.goreleaser_options}}
         env:
-          GITHUB_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       ## push images to registries
       ## only for canary build
