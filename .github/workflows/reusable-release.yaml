@@ -31,12 +31,16 @@ jobs:
           echo "Free space:"
           df -h  
 
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@v7
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@v1.2.0
         with:
-          root-reserve-mb: 512
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
 
       - name: "free space"
         run: |
