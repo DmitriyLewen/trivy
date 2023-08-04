@@ -57,6 +57,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "free space"
+        run: |
+          echo "Free space:"
+          df -h            
+
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
@@ -73,6 +78,11 @@ jobs:
           GPG_KEY: ${{ secrets.GPG_KEY }}
         run: |
           echo "$GPG_KEY" > gpg.key
+
+      - name: "free space"
+        run: |
+          echo "Free space:"
+          df -h         
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
