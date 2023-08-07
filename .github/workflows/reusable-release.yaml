@@ -26,11 +26,8 @@ jobs:
       packages: write # For GHCR
       contents: read  # Not required for public repositories, but for clarity
     steps:
-      - name: "free space"
-        run: |
-          echo "Free space:"
-          df -h  
-
+      # Goreleaser binaries and archives are large
+      # Remove pre-installed packages to free space for bins
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@v1.2.0
         with:
@@ -41,11 +38,6 @@ jobs:
           large-packages: true
           docker-images: true
           swap-storage: true
-
-      - name: "free space"
-        run: |
-          echo "Free space:"
-          df -h  
 
       - name: Cosign install
         uses: sigstore/cosign-installer@a5d81fb6bdbcbb3d239e864d6552820420254494
