@@ -87,11 +87,6 @@ jobs:
         run: |
           echo "$GPG_KEY" > gpg.key
 
-      - name: "free space"
-        run: |
-          echo "Free space:"
-          df -h         
-
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
         with:
@@ -104,12 +99,7 @@ jobs:
 
       - name: "remove gpg key"
         run: |
-          rm gpg.key
-
-      - name: "free space"
-        run: |
-          echo "Free space:"
-          df -h               
+          rm gpg.key     
 
       # size of `dist` dir for release is large
       # we need to remove unneeded binaries and archives
@@ -117,11 +107,15 @@ jobs:
       - name: Remove unneeded binaries and archives
         if: ${{ inputs.goreleaser_config == 'goreleaser.yml' }}
         run: |
-          ls -hl dist
+          echo "Free space before remove:"
+          df -h 
           rm -r dist/build-*
-          rm -r dist/*tar.gz
+          rm -r dist/*tar.gz*
           rm -r dist/*zip
-          ls -hl dist          
+          echo "Free space after remove:"
+          df -h
+          echo "List of files:"
+          ls -hl
 
       # Push images to registries (only for canary build)
       # The custom Dockerfile.canary is necessary
