@@ -78,11 +78,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "free space"
-        run: |
-          echo "Free space:"
-          df -h            
-
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
@@ -118,6 +113,11 @@ jobs:
       - name: "remove gpg key"
         run: |
           rm gpg.key
+
+      - name: "free space"
+        run: |
+          echo "Free space:"
+          df -h               
 
       # size of `dist` dir for release is large
       # we need to remove unneeded binaries and archives
