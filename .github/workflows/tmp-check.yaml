@@ -1,0 +1,12 @@
+name: tmp-check
+on:
+  workflow_dispatch:
+
+jobs:
+  tmp-check:
+    name: Tmp check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check root dir
+        run: |
+          ls -hl /
