@@ -24,4 +24,4 @@ jobs:
           git config --global user.name "Teppei Fukuda"
 
       - name: Import GPG key
-        run: echo -e "${{ secrets.GPG_KEY }}" | gpg --import
+        run: echo -e "${{ secrets.GPG_KEY }}" | gpg --batch --import
