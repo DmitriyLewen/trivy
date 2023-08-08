@@ -26,19 +26,6 @@ jobs:
       packages: write # For GHCR
       contents: read  # Not required for public repositories, but for clarity
     steps:
-      # Goreleaser binaries and archives are large
-      # Remove pre-installed packages to free space for bins
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@v1.2.0
-        with:
-          tool-cache: false
-          android: true
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
-
       - name: Cosign install
         uses: sigstore/cosign-installer@a5d81fb6bdbcbb3d239e864d6552820420254494
 
@@ -85,7 +72,7 @@ jobs:
         env:
           GPG_KEY: ${{ secrets.GPG_KEY }}
         run: |
-          echo "$GPG_KEY" > gpg.key
+          echo "$GPG_KEY" > gpg.key  
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
@@ -96,6 +83,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
           NFPM_DEFAULT_RPM_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_FILE: "gpg.key"
+          GOTMPDIR: "/mnt/tmp"
 
       - name: "remove gpg key"
         run: |
