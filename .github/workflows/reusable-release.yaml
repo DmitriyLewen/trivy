@@ -76,7 +76,11 @@ jobs:
 
       - name: "create go tmp dir"
         run: |
-          mkdir ./tmp          
+          mkdir ./tmp       
+
+      - name: "free size"
+        run: |
+          df -h /tmp           
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
