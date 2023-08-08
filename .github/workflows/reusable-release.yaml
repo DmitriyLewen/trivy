@@ -76,7 +76,7 @@ jobs:
 
       - name: "create go tmp dir"
         run: |
-          mkdir /mnt/tmp          
+          mkdir ./tmp          
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
           NFPM_DEFAULT_RPM_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_FILE: "gpg.key"
-          GOTMPDIR: "/mnt/tmp"
+          GOTMPDIR: "./tmp"
 
       - name: "remove gpg key"
         run: |
