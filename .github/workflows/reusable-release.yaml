@@ -74,12 +74,10 @@ jobs:
         run: |
           echo "$GPG_KEY" > gpg.key  
 
-      - name: "create go tmp dir"
-        run: |
-          mkdir ./tmp       
-
       - name: "free size"
         run: |
+          df -h
+          echo "tmp folder:"
           df -h /tmp           
 
       - name: GoReleaser
@@ -91,7 +89,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
           NFPM_DEFAULT_RPM_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           GPG_FILE: "gpg.key"
-          GOTMPDIR: "./tmp"
+
+      - name: "free size"
+        if: ${{ always() }}
+        run: |
+          df -h
+          echo "tmp folder:"
+          df -h /tmp               
 
       - name: "remove gpg key"
         run: |
