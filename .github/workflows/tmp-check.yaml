@@ -14,4 +14,9 @@ jobs:
 
       - name: Check dir
         run: |
+          pwd
           ls -hl .
+
+      - name: Check tmp dir size
+        run: |
+          df -h /tmp         
