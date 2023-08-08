@@ -7,6 +7,11 @@ jobs:
     name: Tmp check
     runs-on: ubuntu-latest
     steps:
-      - name: Check root dir
+      - name: Checkout code
+        uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 0
+
+      - name: Check dir
         run: |
-          ls -hl /
+          ls -hl .
