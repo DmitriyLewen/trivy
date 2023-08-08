@@ -51,9 +51,10 @@ jobs:
         run: ci/deploy-rpm.sh
 
       - name: Import GPG key
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
         run: |
-          export GPG_TTY=$(tty)
-          echo -e "${{ secrets.GPG_KEY }}" | gpg --import
+          echo -e "$GPG_KEY" | gpg --import
 
       - name: Create deb repository
         run: ci/deploy-deb.sh
