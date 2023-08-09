@@ -1,0 +1,36 @@
+name: maximize-build-disk-space-test
+on:
+  workflow_dispatch:
+
+jobs:
+  maximize-build-disk-space-test:
+    name: maximize-build-disk-space-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: "free size"
+        run: |
+          df -h
+          echo "tmp folder:"
+          df -h /tmp       
+
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 20480 # Required to SBOM + Goreleaser
+          remove-android: 'true'
+          remove-docker-images: 'true'
+          remove-dotnet: 'true'
+
+      - name: Checkout code
+        uses: actions/checkout@v3.5.3
+        with:
+          fetch-depth: 0
+
+      - name: Check dir
+        run: |
+          pwd
+          ls -hl .
+
+      - name: Check tmp dir size
+        run: |
+          df -h /tmp         
