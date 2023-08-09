@@ -9,9 +9,7 @@ jobs:
     steps:
       - name: "free size"
         run: |
-          df -h
-          echo "tmp folder:"
-          df -h /tmp       
+          du -sh /home/* 2>&1 | grep -v  '^du:'      
 
       - name: Maximize build space
         uses: easimon/maximize-build-space@v7
