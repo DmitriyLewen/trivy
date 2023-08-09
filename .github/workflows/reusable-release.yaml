@@ -84,9 +84,7 @@ jobs:
 
       - name: "free size"
         run: |
-          df -h
-          echo "tmp folder:"
-          df -h /tmp           
+          du -sh /*            
 
       - name: GoReleaser
         uses: goreleaser/goreleaser-action@v4
@@ -101,9 +99,7 @@ jobs:
       - name: "free size"
         if: ${{ always() }}
         run: |
-          df -h
-          echo "tmp folder:"
-          df -h /tmp               
+          du -sh /*              
 
       - name: "remove gpg key"
         run: |
