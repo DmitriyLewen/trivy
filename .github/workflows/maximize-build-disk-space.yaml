@@ -14,7 +14,7 @@ jobs:
           echo "/home/runner"
           du -sh /home/runner/* 2>&1 | grep -v  '^du:'
           echo "/home/runner/runners"
-          du -sh /home/runner/runners* 2>&1 | grep -v  '^du:'          
+          du -sh /home/runner/runners/* 2>&1 | grep -v  '^du:'          
           
 
       - name: Maximize build space
