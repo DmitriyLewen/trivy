@@ -26,6 +26,14 @@ jobs:
       packages: write # For GHCR
       contents: read  # Not required for public repositories, but for clarity
     steps:
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v7
+        with:
+          root-reserve-mb: 35840 # Required for Goreleaser
+          remove-android: 'true'
+          remove-docker-images: 'true'
+          remove-dotnet: 'true'
+
       - name: Cosign install
         uses: sigstore/cosign-installer@a5d81fb6bdbcbb3d239e864d6552820420254494
 
