@@ -16,7 +16,7 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 20480 # Required to SBOM + Goreleaser
+          root-reserve-mb: 30720 # Required to SBOM + Goreleaser
           remove-android: 'true'
           remove-docker-images: 'true'
           remove-dotnet: 'true'
@@ -26,11 +26,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check dir
+      - name: "free size"
         run: |
-          pwd
-          ls -hl .
-
-      - name: Check tmp dir size
-        run: |
-          df -h /tmp         
+          df -h
+          echo "tmp folder:"
+          df -h /tmp       
