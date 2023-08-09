@@ -10,7 +10,6 @@ jobs:
       - name: "free size"
         run: |
           du -sh /home/* 2>&1 | grep -v  '^du:'
-          du -sh /home/linuxbrew/* 2>&1 | grep -v  '^du:'
           du -sh /home/runner/* 2>&1 | grep -v  '^du:'
           
 
