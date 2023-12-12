@@ -133,6 +133,7 @@ func (s *Scanner) Detect(osVer string, repo *ftypes.Repository, pkgs []ftypes.Pa
 				PkgRef:           pkg.Ref,
 				Custom:           adv.Custom,
 				DataSource:       adv.DataSource,
+				PkgIdentifier:    pkg.PkgIdentifier,
 			})
 		}
 	}

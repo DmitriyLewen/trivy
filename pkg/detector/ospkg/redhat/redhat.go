@@ -164,7 +164,8 @@ func (s *Scanner) detect(osVer string, pkg ftypes.Package) ([]types.DetectedVuln
 			Vulnerability: dbTypes.Vulnerability{
 				Severity: adv.Severity.String(),
 			},
-			Custom: adv.Custom,
+			Custom:        adv.Custom,
+			PkgIdentifier: pkg.PkgIdentifier,
 		}
 
 		// unpatched vulnerabilities

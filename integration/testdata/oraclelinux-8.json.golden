@@ -75,6 +75,9 @@
           },
           "SeveritySource": "oracle-oval",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-3823",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/oracle/curl@7.61.1-8.el8?arch=x86_64\u0026distro=oracle-8.0"
+          },
           "DataSource": {
             "ID": "oracle-oval",
             "Name": "Oracle Linux OVAL definitions",
@@ -133,6 +136,9 @@
           },
           "SeveritySource": "oracle-oval",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5436",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/oracle/curl@7.61.1-8.el8?arch=x86_64\u0026distro=oracle-8.0"
+          },
           "DataSource": {
             "ID": "oracle-oval",
             "Name": "Oracle Linux OVAL definitions",

@@ -25,6 +25,9 @@
           "ID": "castore@0.1.18",
           "Name": "castore",
           "Version": "0.1.18",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/castore@0.1.18"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -37,6 +40,9 @@
           "ID": "jason@1.4.0",
           "Name": "jason",
           "Version": "1.4.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/jason@1.4.0"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -49,6 +55,9 @@
           "ID": "phoenix@1.6.13",
           "Name": "phoenix",
           "Version": "1.6.13",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/phoenix@1.6.13"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -61,6 +70,9 @@
           "ID": "phoenix_html@3.2.0",
           "Name": "phoenix_html",
           "Version": "3.2.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/phoenix_html@3.2.0"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -73,6 +85,9 @@
           "ID": "phoenix_pubsub@2.1.1",
           "Name": "phoenix_pubsub",
           "Version": "2.1.1",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/phoenix_pubsub@2.1.1"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -85,6 +100,9 @@
           "ID": "phoenix_template@1.0.0",
           "Name": "phoenix_template",
           "Version": "1.0.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/phoenix_template@1.0.0"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -97,6 +115,9 @@
           "ID": "phoenix_view@2.0.1",
           "Name": "phoenix_view",
           "Version": "2.0.1",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/phoenix_view@2.0.1"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -109,6 +130,9 @@
           "ID": "plug@1.14.0",
           "Name": "plug",
           "Version": "1.14.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/plug@1.14.0"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -121,6 +145,9 @@
           "ID": "plug_crypto@1.2.3",
           "Name": "plug_crypto",
           "Version": "1.2.3",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/plug_crypto@1.2.3"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -133,6 +160,9 @@
           "ID": "telemetry@1.1.0",
           "Name": "telemetry",
           "Version": "1.1.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/telemetry@1.1.0"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -153,6 +183,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-42975",
+          "pkgIdentifier": {
+            "PURL": "pkg:hex/phoenix@1.6.13"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Erlang",

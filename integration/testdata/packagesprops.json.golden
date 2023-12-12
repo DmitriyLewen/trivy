@@ -25,6 +25,9 @@
           "ID": "Newtonsoft.Json@9.0.1",
           "Name": "Newtonsoft.Json",
           "Version": "9.0.1",
+          "pkgIdentifier": {
+            "PURL": "pkg:nuget/Newtonsoft.Json@9.0.1"
+          },
           "Layer": {}
         }
       ],
@@ -39,6 +42,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://github.com/advisories/GHSA-5crp-9r3c-p9vr",
+          "pkgIdentifier": {
+            "PURL": "pkg:nuget/Newtonsoft.Json@9.0.1"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Nuget",

@@ -67,6 +67,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-14697",
+          "pkgIdentifier": {
+            "PURL": "pkg:apk/alpine/musl@1.1.20-r4?arch=x86_64\u0026distro=3.9.4"
+          },
           "DataSource": {
             "ID": "alpine",
             "Name": "Alpine Secdb",
@@ -106,6 +109,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-14697",
+          "pkgIdentifier": {
+            "PURL": "pkg:apk/alpine/musl-utils@1.1.20-r4?arch=x86_64\u0026distro=3.9.4"
+          },
           "DataSource": {
             "ID": "alpine",
             "Name": "Alpine Secdb",

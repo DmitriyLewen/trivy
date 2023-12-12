@@ -1,6 +1,8 @@
 package types
 
 import (
+	"golang.org/x/xerrors"
+	"strings"
 	"time"
 
 	v1 "github.com/google/go-containerregistry/pkg/v1"
@@ -79,8 +81,10 @@ type Package struct {
 	Modularitylabel string     `json:",omitempty"` // only for Red Hat based distributions
 	BuildInfo       *BuildInfo `json:",omitempty"` // only for Red Hat
 
-	Ref      string `json:",omitempty"` // identifier which can be used to reference the component elsewhere
+	Ref      string `json:",omitempty"` // Deprecated TODO add good comment
 	Indirect bool   `json:",omitempty"` // this package is direct dependency of the project or not
+
+	PkgIdentifier PkgIdentifier `json:"pkgIdentifier,omitempty"` // TODO add comment
 
 	// Dependencies of this package
 	// Note:　it may have interdependencies, which may lead to infinite loops.
@@ -111,6 +115,44 @@ type BuildInfo struct {
 	ContentSets []string `json:",omitempty"`
 	Nvr         string   `json:",omitempty"`
 	Arch        string   `json:",omitempty"`
+}
+
+// PkgIdentifier represents a software identifiers in one of more of the supported formats.
+type PkgIdentifier struct {
+	// Software identifier in PURL format
+	PURL string `json:",omitempty"`
+	// Software identifier in CPE format
+	CPE string `json:",omitempty"`
+}
+
+// NewPkgIdentifier returns a new PkgIdentifier instance
+func NewPkgIdentifier(value string) (PkgIdentifier, error) {
+	var id PkgIdentifier
+	switch {
+	case isCPE(value):
+		id.CPE = value
+	case isPURL(value):
+		id.PURL = value
+	default:
+		return PkgIdentifier{}, xerrors.New("package identifier does not match any supported format")
+	}
+
+	return id, nil
+}
+
+func (id PkgIdentifier) Empty() bool {
+	return id.CPE == "" && id.PURL == ""
+}
+
+func isCPE(value string) bool {
+	// TODO: properly validate CPE with a regex
+	// ref: https://csrc.nist.gov/schema/cpe/2.3/cpe-naming_2.3.xsd
+	return strings.HasPrefix(value, "cpe:2.3")
+}
+
+func isPURL(value string) bool {
+	// ref: https://github.com/package-url/purl-spec/blob/master/PURL-SPECIFICATION.rst#rules-for-each-purl-component
+	return strings.HasPrefix(value, "pkg:")
 }
 
 func (pkg *Package) Empty() bool {

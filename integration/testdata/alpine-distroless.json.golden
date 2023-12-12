@@ -61,6 +61,9 @@
             "DiffID": "sha256:89da7cc836da4b53ab1ceb572576458c005e7e444b8bb79abda196668a2f0c92"
           },
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-24765",
+          "pkgIdentifier": {
+            "PURL": "pkg:apk/alpine/git@2.35.1-r2?arch=x86_64\u0026distro=3.16"
+          },
           "Title": "Git for Windows is a fork of Git containing Windows-specific patches.  ...",
           "Description": "Git for Windows is a fork of Git containing Windows-specific patches.",
           "Severity": "MEDIUM",

@@ -40,6 +40,7 @@
           "SeveritySource": "k8s",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2023-2431",
           "PkgRef": "pkg:k8s/k8s.io%2Fkubelet@1.27.0",
+          "pkgIdentifier": {},
           "DataSource": {
             "ID": "k8s",
             "Name": "Official Kubernetes CVE Feed",

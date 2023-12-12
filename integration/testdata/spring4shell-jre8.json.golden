@@ -207,6 +207,9 @@
           },
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-22965",
+          "pkgIdentifier": {
+            "PURL": "pkg:maven/org.springframework/spring-beans@5.3.15"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Maven",
@@ -245,15 +248,6 @@
       "Class": "custom",
       "CustomResources": [
         {
-          "Type": "spring4shell/java-major-version",
-          "FilePath": "/usr/local/openjdk-8/release",
-          "Layer": {
-            "Digest": "sha256:d7b564a873af313eb2dbcb1ed0d393c57543e3666bdedcbe5d75841d72b1f791",
-            "DiffID": "sha256:ba40706eccba610401e4942e29f50bdf36807f8638942ce20805b359ae3ac1c1"
-          },
-          "Data": "1.8.0_322"
-        },
-        {
           "Type": "spring4shell/tomcat-version",
           "FilePath": "/usr/local/tomcat/RELEASE-NOTES",
           "Layer": {
@@ -261,6 +255,15 @@
             "DiffID": "sha256:85595543df2b1115a18284a8ef62d0b235c4bc29e3d33b55f89b54ee1eadf4c6"
           },
           "Data": "8.5.77"
+        },
+        {
+          "Type": "spring4shell/java-major-version",
+          "FilePath": "/usr/local/openjdk-8/release",
+          "Layer": {
+            "Digest": "sha256:d7b564a873af313eb2dbcb1ed0d393c57543e3666bdedcbe5d75841d72b1f791",
+            "DiffID": "sha256:ba40706eccba610401e4942e29f50bdf36807f8638942ce20805b359ae3ac1c1"
+          },
+          "Data": "1.8.0_322"
         }
       ]
     }

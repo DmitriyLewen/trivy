@@ -25,6 +25,9 @@
           "ID": "_NIODataStructures@2.41.0",
           "Name": "_NIODataStructures",
           "Version": "2.41.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:cocoapods/_NIODataStructures@2.41.0"
+          },
           "Layer": {}
         }
       ],
@@ -38,6 +41,9 @@
           "Status": "fixed",
           "Layer": {},
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-3215",
+          "pkgIdentifier": {
+            "PURL": "pkg:cocoapods/_NIODataStructures@2.41.0"
+          },
           "Title": "SwiftNIO vulnerable to Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')",
           "Description": "`NIOHTTP1` and projects using it for generating HTTP responses, including SwiftNIO, can be subject to a HTTP Response Injection attack...",
           "Severity": "MEDIUM",

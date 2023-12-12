@@ -31,6 +31,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-11358",
+          "pkgIdentifier": {
+            "PURL": "pkg:npm/jquery@3.3.9"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Npm",
@@ -148,6 +151,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-10744",
+          "pkgIdentifier": {
+            "PURL": "pkg:npm/lodash@4.17.4"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Npm",

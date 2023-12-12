@@ -84,6 +84,7 @@ func (s *Scanner) Detect(_ string, _ *ftypes.Repository, pkgs []ftypes.Package) 
 				PkgRef:           pkg.Ref,
 				Custom:           adv.Custom,
 				DataSource:       adv.DataSource,
+				PkgIdentifier:    pkg.PkgIdentifier,
 			})
 		}
 	}

@@ -1,7 +1,7 @@
 {
   "SchemaVersion": 2,
   "CreatedAt": "2021-08-25T12:20:30.000000005Z",
-  "ArtifactName": "localhost:53869/alpine:3.10",
+  "ArtifactName": "localhost:52473/alpine:3.10",
   "ArtifactType": "container_image",
   "Metadata": {
     "OS": {
@@ -14,10 +14,10 @@
       "sha256:03901b4a2ea88eeaad62dbe59b072b28b6efa00491962b8741081c5df50c65e0"
     ],
     "RepoTags": [
-      "localhost:53869/alpine:3.10"
+      "localhost:52473/alpine:3.10"
     ],
     "RepoDigests": [
-      "localhost:53869/alpine@sha256:b1c5a500182b21d0bfa5a584a8526b56d8be316f89e87d951be04abed2446e60"
+      "localhost:52473/alpine@sha256:b1c5a500182b21d0bfa5a584a8526b56d8be316f89e87d951be04abed2446e60"
     ],
     "ImageConfig": {
       "architecture": "amd64",
@@ -56,7 +56,7 @@
   },
   "Results": [
     {
-      "Target": "localhost:53869/alpine:3.10 (alpine 3.10.2)",
+      "Target": "localhost:52473/alpine:3.10 (alpine 3.10.2)",
       "Class": "os-pkgs",
       "Type": "alpine",
       "Vulnerabilities": [
@@ -73,6 +73,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1549",
+          "pkgIdentifier": {
+            "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2"
+          },
           "DataSource": {
             "ID": "alpine",
             "Name": "Alpine Secdb",
@@ -134,6 +137,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1551",
+          "pkgIdentifier": {
+            "PURL": "pkg:apk/alpine/libcrypto1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2"
+          },
           "DataSource": {
             "ID": "alpine",
             "Name": "Alpine Secdb",
@@ -205,6 +211,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1549",
+          "pkgIdentifier": {
+            "PURL": "pkg:apk/alpine/libssl1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2"
+          },
           "DataSource": {
             "ID": "alpine",
             "Name": "Alpine Secdb",
@@ -266,6 +275,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1551",
+          "pkgIdentifier": {
+            "PURL": "pkg:apk/alpine/libssl1.1@1.1.1c-r0?arch=x86_64\u0026distro=3.10.2"
+          },
           "DataSource": {
             "ID": "alpine",
             "Name": "Alpine Secdb",

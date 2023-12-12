@@ -76,6 +76,9 @@
           },
           "SeveritySource": "photon",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-18276",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/photon/bash@4.4.18-1.ph3?arch=x86_64\u0026distro=photon-3.0"
+          },
           "DataSource": {
             "ID": "photon",
             "Name": "Photon OS CVE metadata",
@@ -128,6 +131,9 @@
           },
           "SeveritySource": "photon",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5481",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/photon/curl@7.61.1-4.ph3?arch=x86_64\u0026distro=photon-3.0"
+          },
           "DataSource": {
             "ID": "photon",
             "Name": "Photon OS CVE metadata",
@@ -187,6 +193,9 @@
           },
           "SeveritySource": "photon",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5481",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/photon/curl-libs@7.61.1-4.ph3?arch=x86_64\u0026distro=photon-3.0"
+          },
           "DataSource": {
             "ID": "photon",
             "Name": "Photon OS CVE metadata",

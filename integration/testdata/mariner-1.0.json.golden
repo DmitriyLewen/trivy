@@ -49,6 +49,9 @@
           },
           "SeveritySource": "cbl-mariner",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-0261",
+          "pkgIdentifier": {
+            "PURL": "pkg:cbl-mariner/vim@8.2.4081-1.cm1?arch=x86_64"
+          },
           "DataSource": {
             "ID": "cbl-mariner",
             "Name": "CBL-Mariner Vulnerability Data",
@@ -80,6 +83,9 @@
           },
           "SeveritySource": "cbl-mariner",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-0158",
+          "pkgIdentifier": {
+            "PURL": "pkg:cbl-mariner/vim@8.2.4081-1.cm1?arch=x86_64"
+          },
           "DataSource": {
             "ID": "cbl-mariner",
             "Name": "CBL-Mariner Vulnerability Data",

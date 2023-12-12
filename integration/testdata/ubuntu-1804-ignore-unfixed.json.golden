@@ -85,6 +85,9 @@
           },
           "SeveritySource": "ubuntu",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/ubuntu/e2fsprogs@1.44.1-1ubuntu1.1?arch=amd64\u0026distro=ubuntu-18.04"
+          },
           "DataSource": {
             "ID": "ubuntu",
             "Name": "Ubuntu CVE Tracker",
@@ -143,6 +146,9 @@
           },
           "SeveritySource": "ubuntu",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/ubuntu/libcom-err2@1.44.1-1ubuntu1.1?arch=amd64\u0026distro=ubuntu-18.04"
+          },
           "DataSource": {
             "ID": "ubuntu",
             "Name": "Ubuntu CVE Tracker",
@@ -201,6 +207,9 @@
           },
           "SeveritySource": "ubuntu",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/ubuntu/libext2fs2@1.44.1-1ubuntu1.1?arch=amd64\u0026distro=ubuntu-18.04"
+          },
           "DataSource": {
             "ID": "ubuntu",
             "Name": "Ubuntu CVE Tracker",
@@ -259,6 +268,9 @@
           },
           "SeveritySource": "ubuntu",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/ubuntu/libss2@1.44.1-1ubuntu1.1?arch=amd64\u0026distro=ubuntu-18.04"
+          },
           "DataSource": {
             "ID": "ubuntu",
             "Name": "Ubuntu CVE Tracker",

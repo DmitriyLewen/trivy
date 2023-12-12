@@ -26,6 +26,9 @@
           "Name": "bzip2",
           "Version": "1.0.8",
           "Indirect": true,
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/bzip2@1.0.8"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -39,6 +42,9 @@
           "Name": "expat",
           "Version": "2.4.8",
           "Indirect": true,
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/expat@2.4.8"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -52,6 +58,9 @@
           "Name": "openssl",
           "Version": "1.1.1q",
           "Indirect": true,
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/openssl@1.1.1q"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -65,6 +74,9 @@
           "Name": "pcre",
           "Version": "8.43",
           "Indirect": true,
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/pcre@8.43"
+          },
           "DependsOn": [
             "bzip2/1.0.8",
             "zlib/1.2.12"
@@ -81,6 +93,9 @@
           "ID": "poco/1.9.4",
           "Name": "poco",
           "Version": "1.9.4",
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/poco@1.9.4"
+          },
           "DependsOn": [
             "pcre/8.43",
             "zlib/1.2.12",
@@ -101,6 +116,9 @@
           "Name": "sqlite3",
           "Version": "3.39.2",
           "Indirect": true,
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/sqlite3@3.39.2"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -114,6 +132,9 @@
           "Name": "zlib",
           "Version": "1.2.12",
           "Indirect": true,
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/zlib@1.2.12"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -132,6 +153,9 @@
           "FixedVersion": "8.45",
           "Status": "fixed",
           "Layer": {},
+          "pkgIdentifier": {
+            "PURL": "pkg:conan/pcre@8.43"
+          },
           "Severity": "UNKNOWN"
         }
       ]

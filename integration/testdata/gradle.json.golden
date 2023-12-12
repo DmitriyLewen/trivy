@@ -30,6 +30,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2020-9548",
+          "pkgIdentifier": {
+            "PURL": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.1"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Maven",
@@ -86,6 +89,9 @@
           "Layer": {},
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2021-20190",
+          "pkgIdentifier": {
+            "PURL": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9.1"
+          },
           "DataSource": {
             "ID": "glad",
             "Name": "GitLab Advisory Database Community",

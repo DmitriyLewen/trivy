@@ -28,6 +28,9 @@
           "Licenses": [
             "MIT"
           ],
+          "pkgIdentifier": {
+            "PURL": "pkg:composer/guzzlehttp/guzzle@7.4.4"
+          },
           "DependsOn": [
             "guzzlehttp/psr7@1.8.3"
           ],
@@ -47,6 +50,9 @@
             "MIT"
           ],
           "Indirect": true,
+          "pkgIdentifier": {
+            "PURL": "pkg:composer/guzzlehttp/psr7@1.8.3"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -67,6 +73,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-24775",
+          "pkgIdentifier": {
+            "PURL": "pkg:composer/guzzlehttp/psr7@1.8.3"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Composer",

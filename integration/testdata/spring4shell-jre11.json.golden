@@ -207,6 +207,9 @@
           },
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-22965",
+          "pkgIdentifier": {
+            "PURL": "pkg:maven/org.springframework/spring-beans@5.3.15"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Maven",

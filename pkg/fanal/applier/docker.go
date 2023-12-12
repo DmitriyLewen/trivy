@@ -2,6 +2,7 @@ package applier
 
 import (
 	"fmt"
+	"github.com/aquasecurity/trivy/pkg/purl"
 	"strings"
 	"time"
 
@@ -213,6 +214,9 @@ func ApplyLayers(layers []types.BlobInfo) types.ArtifactDetail {
 			DiffID: originLayerDiffID,
 		}
 		mergedLayer.Packages[i].BuildInfo = buildInfo
+
+		p := purl.NewPackageIdentifier(mergedLayer.OS.Family, &mergedLayer.OS, pkg)
+		mergedLayer.Packages[i].PkgIdentifier = p
 
 		// Only debian packages
 		if licenses, ok := dpkgLicenses[pkg.Name]; ok {

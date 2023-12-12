@@ -66,6 +66,9 @@
           },
           "SeveritySource": "debian",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-18276",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/bash@4.4-5?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",
@@ -121,6 +124,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/e2fslibs@1.43.4-2?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",
@@ -182,6 +188,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/e2fsprogs@1.43.4-2?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",
@@ -243,6 +252,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/libcomerr2@1.43.4-2?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",
@@ -304,6 +316,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5094",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/libss2@1.43.4-2?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",

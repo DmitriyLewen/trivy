@@ -64,6 +64,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1551",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/libssl1.1@1.1.0k-1~deb9u1?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",
@@ -138,6 +141,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1563",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/libssl1.1@1.1.0k-1~deb9u1?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",
@@ -216,6 +222,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1551",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/openssl@1.1.0k-1~deb9u1?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",
@@ -290,6 +299,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-1563",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/openssl@1.1.0k-1~deb9u1?arch=amd64\u0026distro=debian-9.9"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",

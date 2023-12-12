@@ -29,6 +29,9 @@
           "FixedVersion": "v2.8.0",
           "Status": "fixed",
           "Layer": {},
+          "pkgIdentifier": {
+            "PURL": "pkg:golang/github.com/docker/distribution@2.7.1%2Bincompatible"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Go",
@@ -54,6 +57,9 @@
           "Layer": {},
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-23628",
+          "pkgIdentifier": {
+            "PURL": "pkg:golang/github.com/open-policy-agent/opa@0.35.0"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Go",
@@ -93,6 +99,9 @@
           "Status": "fixed",
           "Layer": {},
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2021-38561",
+          "pkgIdentifier": {
+            "PURL": "pkg:golang/golang.org/x/text@0.3.6"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Go",
@@ -121,6 +130,9 @@
           "FixedVersion": "v2.8.0",
           "Status": "fixed",
           "Layer": {},
+          "pkgIdentifier": {
+            "PURL": "pkg:golang/github.com/docker/distribution@2.7.1%2Bincompatible"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Go",
@@ -151,6 +163,9 @@
           "FixedVersion": "v2.8.0",
           "Status": "fixed",
           "Layer": {},
+          "pkgIdentifier": {
+            "PURL": "pkg:golang/github.com/docker/distribution@2.7.1%2Bincompatible"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Go",

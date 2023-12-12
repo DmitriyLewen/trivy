@@ -66,6 +66,9 @@
           },
           "SeveritySource": "amazon",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5481",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/amazon/curl@7.61.1-9.amzn2.0.1?arch=x86_64\u0026distro=amazon-2+%28Karoo%29"
+          },
           "DataSource": {
             "ID": "amazon",
             "Name": "Amazon Linux Security Center",
@@ -125,6 +128,9 @@
           },
           "SeveritySource": "amazon",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5436",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/amazon/curl@7.61.1-9.amzn2.0.1?arch=x86_64\u0026distro=amazon-2+%28Karoo%29"
+          },
           "DataSource": {
             "ID": "amazon",
             "Name": "Amazon Linux Security Center",

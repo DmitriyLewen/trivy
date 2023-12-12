@@ -24,36 +24,57 @@
         {
           "Name": "Flask",
           "Version": "2.0.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/flask@2.0.0"
+          },
           "Layer": {}
         },
         {
           "Name": "Jinja2",
           "Version": "3.0.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/jinja2@3.0.0"
+          },
           "Layer": {}
         },
         {
           "Name": "Werkzeug",
           "Version": "0.11",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/werkzeug@0.11"
+          },
           "Layer": {}
         },
         {
           "Name": "click",
           "Version": "8.0.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/click@8.0.0"
+          },
           "Layer": {}
         },
         {
           "Name": "itsdangerous",
           "Version": "2.0.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/itsdangerous@2.0.0"
+          },
           "Layer": {}
         },
         {
           "Name": "oauth2-client",
           "Version": "4.0.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/oauth2-client@4.0.0"
+          },
           "Layer": {}
         },
         {
           "Name": "python-gitlab",
           "Version": "2.0.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/python-gitlab@2.0.0"
+          },
           "Layer": {}
         }
       ],
@@ -67,6 +88,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-14806",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/werkzeug@0.11"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Pip",
@@ -114,6 +138,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2020-28724",
+          "pkgIdentifier": {
+            "PURL": "pkg:pypi/werkzeug@0.11"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Pip",

@@ -66,6 +66,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-15542",
+          "pkgIdentifier": {
+            "PURL": "pkg:cargo/ammonia@1.9.0"
+          },
           "DataSource": {
             "Name": "RustSec Advisory Database",
             "URL": "https://github.com/RustSec/advisory-db"
@@ -105,6 +108,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2021-38193",
+          "pkgIdentifier": {
+            "PURL": "pkg:cargo/ammonia@1.9.0"
+          },
           "DataSource": {
             "Name": "RustSec Advisory Database",
             "URL": "https://github.com/RustSec/advisory-db"

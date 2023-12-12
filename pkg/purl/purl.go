@@ -198,6 +198,20 @@ func (p *PackageURL) BOMRef() string {
 	return purl.String()
 }
 
+func NewPackageIdentifier(t ftypes.TargetType, os *ftypes.OS, pkg ftypes.Package) ftypes.PkgIdentifier {
+	pkgURL, err := NewPackageURL(t, types.Metadata{OS: os}, pkg)
+	if err != nil || pkgURL == nil {
+		return ftypes.PkgIdentifier{}
+	}
+
+	pkgIdentifier, err := ftypes.NewPkgIdentifier(pkgURL.String())
+	if err != nil {
+		return ftypes.PkgIdentifier{}
+	}
+
+	return pkgIdentifier
+}
+
 // nolint: gocyclo
 func NewPackageURL(t ftypes.TargetType, metadata types.Metadata, pkg ftypes.Package) (*PackageURL, error) {
 	var qualifiers packageurl.Qualifiers

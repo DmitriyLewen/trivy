@@ -25,6 +25,9 @@
           "ID": "github.com/apple/swift-atomics@1.1.0",
           "Name": "github.com/apple/swift-atomics",
           "Version": "1.1.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:swift/github.com/apple/swift-atomics@1.1.0"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -37,6 +40,9 @@
           "ID": "github.com/apple/swift-nio@2.41.0",
           "Name": "github.com/apple/swift-nio",
           "Version": "2.41.0",
+          "pkgIdentifier": {
+            "PURL": "pkg:swift/github.com/apple/swift-nio@2.41.0"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -56,6 +62,9 @@
           "Status": "fixed",
           "Layer": {},
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-3215",
+          "pkgIdentifier": {
+            "PURL": "pkg:swift/github.com/apple/swift-nio@2.41.0"
+          },
           "Title": "SwiftNIO vulnerable to Improper Neutralization of CRLF Sequences in HTTP Headers ('HTTP Response Splitting')",
           "Description": "`NIOHTTP1` and projects using it for generating HTTP responses, including SwiftNIO, can be subject to a HTTP Response Injection attack...",
           "Severity": "MEDIUM",

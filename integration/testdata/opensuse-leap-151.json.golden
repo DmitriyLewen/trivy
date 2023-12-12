@@ -74,6 +74,9 @@
           },
           "SeveritySource": "suse-cvrf",
           "PrimaryURL": "https://lists.opensuse.org/opensuse-security-announce/2020-01/msg00030.html",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/opensuse.leap/libopenssl1_1@1.1.0i-lp151.8.3.1?arch=x86_64\u0026distro=opensuse.leap-15.1"
+          },
           "DataSource": {
             "ID": "suse-cvrf",
             "Name": "SUSE CVRF",
@@ -100,6 +103,9 @@
           },
           "SeveritySource": "suse-cvrf",
           "PrimaryURL": "https://lists.opensuse.org/opensuse-security-announce/2020-01/msg00030.html",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/opensuse.leap/openssl-1_1@1.1.0i-lp151.8.3.1?arch=x86_64\u0026distro=opensuse.leap-15.1"
+          },
           "DataSource": {
             "ID": "suse-cvrf",
             "Name": "SUSE CVRF",

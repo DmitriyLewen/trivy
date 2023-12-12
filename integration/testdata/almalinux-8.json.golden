@@ -65,6 +65,9 @@
           },
           "SeveritySource": "alma",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2021-3712",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/alma/openssl-libs@1.1.1k-4.el8?arch=x86_64\u0026distro=alma-8.5\u0026epoch=1"
+          },
           "DataSource": {
             "ID": "alma",
             "Name": "AlmaLinux Product Errata",

@@ -66,6 +66,9 @@
           },
           "SeveritySource": "amazon",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-5481",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/amazon/curl@7.61.1-11.91.amzn1?arch=x86_64\u0026distro=amazon-AMI+release+2018.03"
+          },
           "DataSource": {
             "ID": "amazon",
             "Name": "Amazon Linux Security Center",

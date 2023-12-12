@@ -69,6 +69,9 @@
           },
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-18224",
+          "pkgIdentifier": {
+            "PURL": "pkg:deb/debian/libidn2-0@2.0.5-1?arch=amd64\u0026distro=debian-10.1"
+          },
           "DataSource": {
             "ID": "debian",
             "Name": "Debian Security Tracker",

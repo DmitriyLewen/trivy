@@ -52,6 +52,7 @@ func (s *Scanner) Detect(osVer string, _ *ftypes.Repository, pkgs []ftypes.Packa
 				PkgRef:           pkg.Ref,
 				Layer:            pkg.Layer,
 				DataSource:       adv.DataSource,
+				PkgIdentifier:    pkg.PkgIdentifier,
 			}
 
 			// Unpatched vulnerabilities

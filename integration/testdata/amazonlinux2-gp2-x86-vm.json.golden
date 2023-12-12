@@ -35,6 +35,9 @@
           "Layer": {},
           "SeveritySource": "nvd",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2022-38177",
+          "pkgIdentifier": {
+            "PURL": "pkg:rpm/amazon/bind-export-libs@9.11.4-26.P2.amzn2.5.2?arch=x86_64\u0026distro=amazon-2+%28Karoo%29\u0026epoch=32"
+          },
           "DataSource": {
             "ID": "amazon",
             "Name": "Amazon Linux Security Center",

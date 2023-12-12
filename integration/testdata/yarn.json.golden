@@ -28,6 +28,9 @@
           "Licenses": [
             "MIT"
           ],
+          "pkgIdentifier": {
+            "PURL": "pkg:npm/jquery@3.2.1"
+          },
           "Layer": {},
           "Locations": [
             {
@@ -48,6 +51,9 @@
           "Layer": {},
           "SeveritySource": "ghsa",
           "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2019-11358",
+          "pkgIdentifier": {
+            "PURL": "pkg:npm/jquery@3.2.1"
+          },
           "DataSource": {
             "ID": "ghsa",
             "Name": "GitHub Security Advisory Npm",
