@@ -101,33 +101,35 @@ func (w Writer) Write(ctx context.Context, report types.Report) error {
 			continue
 		}
 
-		manifest := Manifest{}
-		manifest.Name = string(result.Type)
-		// show path for language-specific packages only
-		if result.Class == types.ClassLangPkg {
-			manifest.File = &File{
-				SrcLocation: result.Target,
-			}
-		}
-
-		resolved := make(map[string]Package)
-
-		for _, pkg := range result.Packages {
-			var err error
-			githubPkg := Package{}
-			githubPkg.Scope = RuntimeScope
-			githubPkg.Relationship = getPkgRelationshipType(pkg)
-			githubPkg.Dependencies = pkg.DependsOn // TODO: replace with PURL
-			githubPkg.PackageUrl, err = buildPurl(result.Type, report.Metadata, pkg)
-			if err != nil {
-				return xerrors.Errorf("unable to build purl for %s: %w", pkg.Name, err)
+		for _, res := range separateApplications(result) {
+			manifest := Manifest{}
+			manifest.Name = string(res.Type)
+			// show path for language-specific packages only
+			if res.Class == types.ClassLangPkg {
+				manifest.File = &File{
+					SrcLocation: res.Target,
+				}
 			}
 
-			resolved[pkg.Name] = githubPkg
-		}
+			resolved := make(map[string]Package)
 
-		manifest.Resolved = resolved
-		manifests[result.Target] = manifest
+			for _, pkg := range res.Packages {
+				var err error
+				githubPkg := Package{}
+				githubPkg.Scope = RuntimeScope
+				githubPkg.Relationship = getPkgRelationshipType(pkg)
+				githubPkg.Dependencies = pkg.DependsOn // TODO: replace with PURL
+				githubPkg.PackageUrl, err = buildPurl(res.Type, report.Metadata, pkg)
+				if err != nil {
+					return xerrors.Errorf("unable to build purl for %s: %w", pkg.Name, err)
+				}
+
+				resolved[pkg.Name] = githubPkg
+			}
+
+			manifest.Resolved = resolved
+			manifests[res.Target] = manifest
+		}
 	}
 
 	snapshot.Manifests = manifests
@@ -141,6 +143,22 @@ func (w Writer) Write(ctx context.Context, report types.Report) error {
 		return xerrors.Errorf("failed to write github dependency snapshots: %w", err)
 	}
 	return nil
+}
+
+// separateApplications separates aggregated applications (pip/gem/npm/jar/conda) to use the correct file path.
+func separateApplications(result types.Result) types.Results {
+	if result.Type == ftypes.NodePkg || result.Type == ftypes.PythonPkg || result.Type == ftypes.GemSpec ||
+		result.Type == ftypes.Jar || result.Type == ftypes.CondaPkg {
+		var results types.Results
+		for _, pkg := range result.Packages {
+			res := result
+			res.Target = pkg.FilePath
+			res.Packages = ftypes.Packages{pkg}
+			results = append(results, res)
+		}
+		return results
+	}
+	return types.Results{result}
 }
 
 func getMetadata(report types.Report) Metadata {

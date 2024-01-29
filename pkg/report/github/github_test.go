@@ -121,6 +121,94 @@ func TestWriter_Write(t *testing.T) {
 			},
 		},
 		{
+			name: "Applications",
+			report: types.Report{
+				SchemaVersion: 2,
+				ArtifactName:  "python:latest",
+				Metadata: types.Metadata{
+					OS: &ftypes.OS{
+						Family: "debian",
+						Name:   "12.4",
+						Eosl:   false,
+					},
+				},
+				Results: types.Results{
+					{
+						Target: "Python",
+						Class:  "lang-pkgs",
+						Type:   "python-pkg",
+						Packages: []ftypes.Package{
+							{
+								Name:    "pip",
+								Version: "23.2.1",
+								Licenses: []string{
+									"MIT",
+								},
+								FilePath: "usr/local/lib/python3.12/site-packages/pip-23.2.1.dist-info/METADATA",
+							},
+							{
+								Name:    "setuptools",
+								Version: "69.0.2",
+								Licenses: []string{
+									"MIT License",
+								},
+								FilePath: "usr/local/lib/python3.12/site-packages/setuptools-69.0.2.dist-info/METADATA",
+							},
+							{
+								Name:    "wheel",
+								Version: "0.42.0",
+								Licenses: []string{
+									"MIT",
+								},
+								FilePath: "usr/local/lib/python3.12/site-packages/wheel-0.42.0.dist-info/METADATA",
+							},
+						},
+					},
+				},
+			},
+			want: map[string]github.Manifest{
+				"usr/local/lib/python3.12/site-packages/pip-23.2.1.dist-info/METADATA": {
+					Name: "python-pkg",
+					File: &github.File{
+						SrcLocation: "usr/local/lib/python3.12/site-packages/pip-23.2.1.dist-info/METADATA",
+					},
+					Resolved: map[string]github.Package{
+						"pip": {
+							PackageUrl:   "pkg:pypi/pip@23.2.1",
+							Relationship: "direct",
+							Scope:        "runtime",
+						},
+					},
+				},
+				"usr/local/lib/python3.12/site-packages/setuptools-69.0.2.dist-info/METADATA": {
+					Name: "python-pkg",
+					File: &github.File{
+						SrcLocation: "usr/local/lib/python3.12/site-packages/setuptools-69.0.2.dist-info/METADATA",
+					},
+					Resolved: map[string]github.Package{
+						"setuptools": {
+							PackageUrl:   "pkg:pypi/setuptools@69.0.2",
+							Relationship: "direct",
+							Scope:        "runtime",
+						},
+					},
+				},
+				"usr/local/lib/python3.12/site-packages/wheel-0.42.0.dist-info/METADATA": {
+					Name: "python-pkg",
+					File: &github.File{
+						SrcLocation: "usr/local/lib/python3.12/site-packages/wheel-0.42.0.dist-info/METADATA",
+					},
+					Resolved: map[string]github.Package{
+						"wheel": {
+							PackageUrl:   "pkg:pypi/wheel@0.42.0",
+							Relationship: "direct",
+							Scope:        "runtime",
+						},
+					},
+				},
+			},
+		},
+		{
 			name: "maven",
 			report: types.Report{
 				SchemaVersion: 2,
