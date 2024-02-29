@@ -1487,6 +1487,7 @@ func TestMarshaler_Marshal(t *testing.T) {
 									},
 									References: []string{
 										"https://access.redhat.com/security/cve/CVE-2022-42003",
+										"https://gitlab.com/example/link (with-extra-values)",
 									},
 									PublishedDate:    lo.ToPtr(time.Date(2022, 10, 02, 05, 15, 0, 0, time.UTC)),
 									LastModifiedDate: lo.ToPtr(time.Date(2022, 12, 20, 10, 15, 0, 0, time.UTC)),
@@ -1573,6 +1574,9 @@ func TestMarshaler_Marshal(t *testing.T) {
 							},
 							{
 								URL: "https://access.redhat.com/security/cve/CVE-2022-42003",
+							},
+							{
+								URL: "https://gitlab.com/example/link",
 							},
 						},
 						Published: "2022-10-02T05:15:00+00:00",
