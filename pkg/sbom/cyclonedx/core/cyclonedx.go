@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
+	"github.com/hashicorp/go-getter/helper/url"
 	"github.com/samber/lo"
 	"golang.org/x/exp/slices"
 
@@ -356,7 +357,17 @@ func UnmarshalProperties(properties *[]cdx.Property) map[string]string {
 func cdxAdvisories(refs []string) *[]cdx.Advisory {
 	refs = lo.Uniq(refs)
 	advs := lo.FilterMap(refs, func(ref string, _ int) (cdx.Advisory, bool) {
-		return cdx.Advisory{URL: ref}, ref != ""
+		// But there are times when the link contains additional information
+		// e.g. https://security-tracker.debian.org/tracker/CVE-2023-31484 contains branch info:
+		// https://github.com/andk/cpanpm/commit/9c98370287f4e709924aee7c58ef21c85289a7f0 (2.35-TRIAL)
+		// But we need to insert only url
+		rr := strings.Split(ref, " ")
+		for _, r := range rr {
+			if _, err := url.Parse(r); err == nil {
+				return cdx.Advisory{URL: r}, true
+			}
+		}
+		return cdx.Advisory{}, false
 	})
 
 	// cyclonedx converts link to empty `[]cdx.Advisory` to `null`
