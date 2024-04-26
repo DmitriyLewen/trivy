@@ -70,6 +70,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+          cache: false # Don't use cache to avoid `No space left on device ` error for `Post Setup Go` step
 
       - name: Generate SBOM
         uses: CycloneDX/gh-gomod-generate-sbom@v2
