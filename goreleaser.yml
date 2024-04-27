@@ -12,10 +12,10 @@ builds:
     goos:
       - linux
     goarch:
-      - arm64
+      - 386
+      - amd64
     goarm:
       - 7
-
 
 nfpms:
   -
