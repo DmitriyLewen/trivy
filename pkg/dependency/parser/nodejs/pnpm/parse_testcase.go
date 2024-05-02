@@ -217,4 +217,32 @@ var (
 			DependsOn: []string{"@babel/runtime@7.22.3"},
 		},
 	}
+
+	// docker run --name node --rm -it node@sha256:cbd62dc7ba7e50d01520f2c0a8d9853ec872187fa806ed61d0f87081c220386d sh
+	// npm install -g pnpm@9.0.6
+	// pnpm add lodash@4.17.21 @types/lodash@4.17.0 promise@8.1.0
+	// pnpm add -D promise@8.1.0
+	// pnpm list --prod --depth 10 | grep -E -o "\S+\s+[0-9]+(\.[0-9]+)+$" | awk '{printf("{ID: \""$1"@"$2"\", Name: \""$1"\", Version: \""$2"\", Indirect: true},\n")}' | sort -u
+	pnpmV9WithDev = []types.Library{
+		{ID: "@types/lodash@4.17.0", Name: "@types/lodash", Version: "4.17.0", Indirect: true},
+		{ID: "lodash@4.17.21", Name: "lodash", Version: "4.17.21", Indirect: true},
+	}
+	pnpmV9WithDevDeps = []types.Dependency{
+		{
+			ID:        "@babel/runtime@7.22.3",
+			DependsOn: []string{"regenerator-runtime@0.13.11"},
+		},
+		{
+			ID:        "loose-envify@1.4.0",
+			DependsOn: []string{"js-tokens@4.0.0"},
+		},
+		{
+			ID:        "react@18.1.0",
+			DependsOn: []string{"loose-envify@1.4.0"},
+		},
+		{
+			ID:        "redux@4.2.0",
+			DependsOn: []string{"@babel/runtime@7.22.3"},
+		},
+	}
 )

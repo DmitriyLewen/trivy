@@ -134,16 +134,16 @@ func (p *Parser) parsePackage(depPath string, lockFileVersion float64) (string, 
 	if lockFileVersion < 6 {
 		versionSep = "/"
 	}
-	return p.parseDepPath(depPath, versionSep)
-}
 
-func (p *Parser) parseDepPath(depPath, versionSep string) (string, string) {
-	// Skip registry
-	// e.g.
-	//    - "registry.npmjs.org/lodash/4.17.10" => "lodash/4.17.10"
-	//    - "registry.npmjs.org/@babel/generator/7.21.9" => "@babel/generator/7.21.9"
-	//    - "/lodash/4.17.10" => "lodash/4.17.10"
-	_, depPath, _ = strings.Cut(depPath, "/")
+	// Skip registry (only for v6 and earlier)
+	if lockFileVersion < 7 {
+		// e.g.
+		//    - "registry.npmjs.org/lodash/4.17.10" => "lodash/4.17.10"
+		//    - "registry.npmjs.org/@babel/generator/7.21.9" => "@babel/generator/7.21.9"
+		//    - "/lodash/4.17.10" => "lodash/4.17.10"
+		//    - "/asap@2.0.6" => "asap@2.0.6"
+		_, depPath, _ = strings.Cut(depPath, "/")
+	}
 
 	// Parse scope
 	// e.g.
@@ -163,6 +163,7 @@ func (p *Parser) parseDepPath(depPath, versionSep string) (string, string) {
 	if scope != "" {
 		name = fmt.Sprintf("%s/%s", scope, name)
 	}
+
 	// Trim peer deps
 	// e.g.
 	//    - v5:  "7.21.5_@babel+core@7.21.8" => "7.21.5"
