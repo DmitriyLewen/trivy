@@ -12,7 +12,7 @@ updates:
     open-pull-requests-limit: 10
     directory: /
     schedule:
-      interval: monthly
+      interval: daily
     groups:
       docker:
         patterns:
