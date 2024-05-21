@@ -20,8 +20,11 @@ updates:
     open-pull-requests-limit: 10
     directory: /
     schedule:
-      interval: daily
+      interval: monthly
     groups:
+      aws:
+        patterns:
+          - "github.com/aws/*"
       docker:
         patterns:
           - "github.com/docker/*"
@@ -29,9 +32,6 @@ updates:
       testcontainers:
         patterns:
           - "github.com/testcontainers/*"
-      aws:
-        patterns:
-          - "github.com/aws/*"
       common:
         patterns:
           - "*"
