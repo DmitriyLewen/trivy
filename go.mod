@@ -131,7 +131,7 @@ require (
 	helm.sh/helm/v3 v3.14.2
 	k8s.io/api v0.30.0
 	k8s.io/utils v0.0.0-20231127182322-b307cd553661
-	modernc.org/sqlite v1.29.7
+	modernc.org/sqlite v1.29.10
 	sigs.k8s.io/yaml v1.4.0
 )
 
