@@ -4,8 +4,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
-    github-actions:
-      docker:
+    groups:
+      github-actions:
         patterns:
           - "*"
   - package-ecosystem: docker
@@ -29,6 +29,9 @@ updates:
       testcontainers:
         patterns:
           - "github.com/testcontainers/*"
+      aws:
+        patterns:
+          - "github.com/aws/*"
       common:
         patterns:
           - "*"
