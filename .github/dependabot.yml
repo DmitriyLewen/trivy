@@ -13,3 +13,14 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+      docker:
+        patterns:
+          - "github.com/docker/*"
+          - "github.com/moby/*"
+      testcontainers:
+        patterns:
+          - "github.com/testcontainers/*"
+      common:
+        patterns:
+          - "*"
