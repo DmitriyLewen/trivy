@@ -112,7 +112,7 @@ require (
 	github.com/testcontainers/testcontainers-go v0.30.0
 	github.com/testcontainers/testcontainers-go/modules/localstack v0.28.0
 	github.com/tetratelabs/wazero v1.7.0
-	github.com/twitchtv/twirp v8.1.2+incompatible
+	github.com/twitchtv/twirp v8.1.3+incompatible
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/xlab/treeprint v1.2.0
 	github.com/zclconf/go-cty v1.14.4
