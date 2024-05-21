@@ -4,10 +4,18 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    github-actions:
+      docker:
+        patterns:
+          - "*"
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: monthly
+    groups:
+      docker:
+        patterns:
+          - "*"
   - package-ecosystem: gomod
     open-pull-requests-limit: 10
     directory: /
