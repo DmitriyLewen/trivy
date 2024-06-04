@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 
 	"golang.org/x/xerrors"
@@ -16,6 +17,7 @@ import (
 )
 
 func main() {
+	testPR1()
 	if err := run(); err != nil {
 		var exitError *types.ExitError
 		if errors.As(err, &exitError) {
@@ -40,4 +42,8 @@ func run() error {
 		return err
 	}
 	return nil
+}
+
+func testPR1() {
+	fmt.Println("testPR1")
 }
