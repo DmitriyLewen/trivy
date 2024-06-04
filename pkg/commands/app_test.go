@@ -169,6 +169,7 @@ Check Bundle:
 }
 
 func TestFlags(t *testing.T) {
+
 	type want struct {
 		format     types.Format
 		severities []dbTypes.Severity
