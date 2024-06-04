@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.53.1](https://github.com/DmitriyLewen/trivy/compare/v0.53.0...v0.53.1) (2024-06-04)
+
+
+### Bug Fixes
+
+* **please release:** use `0.53.0` ([2ad8ab5](https://github.com/DmitriyLewen/trivy/commit/2ad8ab5308fe0a3e4dcd8db4dd97568f512f01e5))
+* test PR1 ([#64](https://github.com/DmitriyLewen/trivy/issues/64)) ([d0265b2](https://github.com/DmitriyLewen/trivy/commit/d0265b2ccab9533a2fadc580cc942211ab1696eb))
+
 ## [0.52.0](https://github.com/aquasecurity/trivy/compare/v0.51.1...v0.52.0) (2024-06-03)
 
 
