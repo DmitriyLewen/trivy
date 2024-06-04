@@ -8,6 +8,9 @@ jobs:
   backport:
     name: Backport PR
     runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'backport-to-')
     steps:
       - name: Backport Action
         uses: sorenlouv/backport-github-action@v9.5.1
