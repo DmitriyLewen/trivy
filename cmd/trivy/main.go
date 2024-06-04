@@ -18,6 +18,7 @@ import (
 
 func main() {
 	testPR1()
+	testPR2()
 	if err := run(); err != nil {
 		var exitError *types.ExitError
 		if errors.As(err, &exitError) {
@@ -46,4 +47,8 @@ func run() error {
 
 func testPR1() {
 	fmt.Println("testPR1")
+}
+
+func testPR2() {
+	fmt.Println("testPR2")
 }
