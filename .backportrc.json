@@ -1,4 +1,5 @@
 {
   "prTitle": "{{sourcePullRequest.title}} [backport: {{targetBranch}}]",
-  "targetPRLabels": ["backport"]
+  "targetPRLabels": ["backport"],
+  "commitConflicts": true
 }
