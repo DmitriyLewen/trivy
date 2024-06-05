@@ -168,12 +168,12 @@ Check Bundle:
 	}
 }
 
-func testPBackport(s string, t *testing.T) {
+func testBackport(s string, t *testing.T) {
 	t.Log(s)
 }
 
 func TestFlags(t *testing.T) {
-	testPBackport("pr7", t)
+	testBackport("pr1.0", t)
 	type want struct {
 		format     types.Format
 		severities []dbTypes.Severity
