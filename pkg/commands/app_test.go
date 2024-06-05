@@ -173,7 +173,7 @@ func testPBackport(s string, t *testing.T) {
 }
 
 func TestFlags(t *testing.T) {
-	testPBackport("pr4", t)
+	testPBackport("pr5", t)
 	type want struct {
 		format     types.Format
 		severities []dbTypes.Severity
