@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 BRANCH_NAME=$1
