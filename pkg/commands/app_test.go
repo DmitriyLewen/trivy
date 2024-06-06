@@ -168,16 +168,24 @@ Check Bundle:
 	}
 }
 
+<<<<<<< HEAD
 func testPBackport(s string, t *testing.T) {
+=======
+func testBackport2(s string, t *testing.T) {
+>>>>>>> fe1db15d5 (fix: test 2.0 (#86))
 	t.Log(s)
 }
 
 func TestFlags(t *testing.T) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	testPBackport("pr4", t)
 =======
 	testPBackport("pr7", t)
 >>>>>>> 39b35e181 (fix: test 7 (#81))
+=======
+	testBackport2("pr1.1", t)
+>>>>>>> fe1db15d5 (fix: test 2.0 (#86))
 	type want struct {
 		format     types.Format
 		severities []dbTypes.Severity
