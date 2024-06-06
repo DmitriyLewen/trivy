@@ -64,6 +64,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 
 // NewApp is the factory method to return Trivy CLI
 func NewApp() *cobra.Command {
+	fmt.Println("test2.1")
 	globalFlags := flag.NewGlobalFlagGroup()
 	rootCmd := NewRootCommand(globalFlags)
 	rootCmd.AddGroup(
