@@ -24,17 +24,17 @@ updates:
     groups:
       aws:
         patterns:
-          - "github.com/aws/*"
+        - "github.com/aws/*"
       docker:
         patterns:
-          - "github.com/docker/*"
-          - "github.com/moby/*"
+        - "github.com/docker/*"
+        - "github.com/moby/*"
       testcontainers:
         patterns:
-          - "github.com/testcontainers/*"
+        - "github.com/testcontainers/*"
       trivy:
         patterns:
-          - "github.com/aquasecurity/trivy-*"
+        - "github.com/aquasecurity/trivy-*"
       common:
         patterns:
-          - "*"
+        - "*"
