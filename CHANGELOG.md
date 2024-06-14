@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.54.1](https://github.com/DmitriyLewen/trivy/compare/v0.54.0...v0.54.1) (2024-06-05)
+
+
+### Bug Fixes
+
+* test 1 ([#70](https://github.com/DmitriyLewen/trivy/issues/70)) ([858a4b0](https://github.com/DmitriyLewen/trivy/commit/858a4b0229d5a46c8198662822396bc99a475807))
+* test 2 ([#71](https://github.com/DmitriyLewen/trivy/issues/71)) ([#73](https://github.com/DmitriyLewen/trivy/issues/73)) ([3e1177b](https://github.com/DmitriyLewen/trivy/commit/3e1177beebb715aa78ec704f88ce0f012e80e405))
+* test 3 ([#74](https://github.com/DmitriyLewen/trivy/issues/74)) ([#75](https://github.com/DmitriyLewen/trivy/issues/75)) ([7a65cb5](https://github.com/DmitriyLewen/trivy/commit/7a65cb501e61aba7c3e8a1ff7e4f0d6a53dee013))
+* test 4 ([#76](https://github.com/DmitriyLewen/trivy/issues/76)) ([#78](https://github.com/DmitriyLewen/trivy/issues/78)) ([44ab5a2](https://github.com/DmitriyLewen/trivy/commit/44ab5a2faa74e00405adaee9886538aa3fc56cf5))
+* test 7 ([#81](https://github.com/DmitriyLewen/trivy/issues/81)) ([#82](https://github.com/DmitriyLewen/trivy/issues/82)) ([eb9adb3](https://github.com/DmitriyLewen/trivy/commit/eb9adb3069c94ab156c9beaf791ff429e362dfd8))
+
 ## [0.52.0](https://github.com/aquasecurity/trivy/compare/v0.51.1...v0.52.0) (2024-06-03)
 
 
