@@ -34,6 +34,11 @@ updates:
       testcontainers:
         patterns:
           - "github.com/testcontainers/*"
+      new:
+        exclude-patterns:
+          - "github.com/aquasecurity/trivy-*"
+        patterns:
+          - "*"
       all:
         exclude-patterns:
           - "github.com/aquasecurity/trivy-*"
