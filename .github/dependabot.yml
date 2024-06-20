@@ -39,7 +39,7 @@ updates:
           - "github.com/aquasecurity/trivy-*"
         patterns:
           - "*"
-      all:
+      common:
         exclude-patterns:
           - "github.com/aquasecurity/trivy-*"
         patterns:
