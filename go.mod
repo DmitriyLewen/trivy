@@ -42,9 +42,9 @@ require (
 	github.com/bmatcuk/doublestar/v4 v4.6.1
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/cheggaaa/pb/v3 v3.1.5
-	github.com/containerd/containerd v1.7.17
+	github.com/containerd/containerd v1.7.18
 	github.com/csaf-poc/csaf_distribution/v3 v3.0.0
-	github.com/docker/docker v26.1.3+incompatible
+	github.com/docker/docker v27.0.0+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/fatih/color v1.17.0
 	github.com/go-git/go-git/v5 v5.12.0
@@ -87,7 +87,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/hashstructure/v2 v2.0.2
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/moby/buildkit v0.13.2
+	github.com/moby/buildkit v0.14.1
 	github.com/open-policy-agent/opa v0.65.0
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/opencontainers/image-spec v1.1.0
@@ -203,7 +203,7 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/distribution/reference v0.6.0 // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
-	github.com/docker/cli v25.0.3+incompatible // indirect
+	github.com/docker/cli v26.1.4+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.8.0 // indirect
 	github.com/docker/go-events v0.0.0-20190806004212-e31b211e4f1c // indirect
