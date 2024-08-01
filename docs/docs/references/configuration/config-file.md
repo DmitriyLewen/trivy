@@ -5,7 +5,7 @@ The config path can be overridden by the `--config` flag.
 
 An example is [here][example].
 
-## Global Options 
+## Global Options
 
 ```yaml
 cache: 
@@ -30,7 +30,7 @@ quiet: false
 timeout: 5m0s
 
 ```
-## Cache Options 
+## Cache Options
 
 ```yaml
 cache: 
@@ -44,15 +44,15 @@ cache:
 
   redis: 
     # Same as '--redis-ca'
-    # Default is 
+    # Default is empty
     ca: 
 
     # Same as '--redis-cert'
-    # Default is 
+    # Default is empty
     cert: 
 
     # Same as '--redis-key'
-    # Default is 
+    # Default is empty
     key: 
 
     # Same as '--redis-tls'
@@ -64,24 +64,24 @@ cache:
   ttl: 0s
 
 ```
-## Client/Server Options 
+## Client/Server Options
 
 ```yaml
 server: 
   # Same as '--server'
-  # Default is 
+  # Default is empty
   addr: 
 
   # Same as '--custom-headers'
   # Default is []
-  custom-headers: 
+  custom-headers: []
 
   # Same as '--listen'
   # Default is localhost:4954
   listen: localhost:4954
 
   # Same as '--token'
-  # Default is 
+  # Default is empty
   token: 
 
   # Same as '--token-header'
@@ -89,7 +89,7 @@ server:
   token-header: Trivy-Token
 
 ```
-## License Options 
+## License Options
 
 ```yaml
 license: 
@@ -128,7 +128,7 @@ license:
 
   # Same as '--ignored-licenses'
   # Default is []
-  ignored: 
+  ignored: []
 
   # Default is [AFL-1.1 AFL-1.2 AFL-2.0 AFL-2.1 AFL-3.0 Apache-1.0 Apache-1.1 Apache-2.0 Artistic-1.0-cl8 Artistic-1.0-Perl Artistic-1.0 Artistic-2.0 BSL-1.0 BSD-2-Clause-FreeBSD BSD-2-Clause-NetBSD BSD-2-Clause BSD-3-Clause-Attribution BSD-3-Clause-Clear BSD-3-Clause-LBNL BSD-3-Clause BSD-4-Clause BSD-4-Clause-UC BSD-Protection CC-BY-1.0 CC-BY-2.0 CC-BY-2.5 CC-BY-3.0 CC-BY-4.0 FTL ISC ImageMagick Libpng Lil-1.0 Linux-OpenIB LPL-1.02 LPL-1.0 MS-PL MIT NCSA OpenSSL PHP-3.01 PHP-3.0 PIL Python-2.0 Python-2.0-complete PostgreSQL SGI-B-1.0 SGI-B-1.1 SGI-B-2.0 Unicode-DFS-2015 Unicode-DFS-2016 Unicode-TOU UPL-1.0 W3C-19980720 W3C-20150513 W3C X11 Xnet Zend-2.0 zlib-acknowledgement Zlib ZPL-1.1 ZPL-2.0 ZPL-2.1]
   notice: 
@@ -198,7 +198,7 @@ license:
   - ZPL-2.1
 
   # Default is []
-  permissive: 
+  permissive: []
 
   # Default is [APSL-1.0 APSL-1.1 APSL-1.2 APSL-2.0 CDDL-1.0 CDDL-1.1 CPL-1.0 EPL-1.0 EPL-2.0 FreeImage IPL-1.0 MPL-1.0 MPL-1.1 MPL-2.0 Ruby]
   reciprocal: 
@@ -261,7 +261,7 @@ license:
   - 0BSD
 
 ```
-## Kubernetes Options 
+## Kubernetes Options
 
 ```yaml
 kubernetes: 
@@ -276,7 +276,7 @@ kubernetes:
   exclude: 
     # Same as '--exclude-nodes'
     # Default is []
-    nodes: 
+    nodes: []
 
     # Same as '--exclude-owned'
     # Default is false
@@ -284,26 +284,26 @@ kubernetes:
 
   # Same as '--exclude-kinds'
   # Default is []
-  excludeKinds: 
+  excludeKinds: []
 
   # Same as '--exclude-namespaces'
   # Default is []
-  excludeNamespaces: 
+  excludeNamespaces: []
 
   # Same as '--include-kinds'
   # Default is []
-  includeKinds: 
+  includeKinds: []
 
   # Same as '--include-namespaces'
   # Default is []
-  includeNamespaces: 
+  includeNamespaces: []
 
   # Same as '--k8s-version'
-  # Default is 
+  # Default is empty
   k8s-version: 
 
   # Same as '--kubeconfig'
-  # Default is 
+  # Default is empty
   kubeconfig: 
 
   node-collector: 
@@ -325,7 +325,7 @@ kubernetes:
 
   # Same as '--tolerations'
   # Default is []
-  tolerations: 
+  tolerations: []
 
 ```
 [example]: https://github.com/aquasecurity/trivy/tree/{{ git.tag }}/examples/trivy-conf/trivy.yaml

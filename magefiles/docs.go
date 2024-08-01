@@ -73,7 +73,7 @@ func generateConfigDocs(filename string) error {
 	f.WriteString(description + "\n")
 
 	for _, group := range allFlagGroups {
-		f.WriteString("## " + group.Name() + " Options \n")
+		f.WriteString("## " + group.Name() + " Options\n")
 		writeFlags(group, f)
 	}
 
@@ -105,7 +105,7 @@ func writeFlags(group flag.FlagGroup, w *os.File) {
 				if flg.GetName() != "" {
 					fmt.Fprintf(w, "%s# Same as '--%s'\n", ind, flg.GetName())
 				}
-				fmt.Fprintf(w, "%s# Default is %v\n", ind, flg.GetDefaultValue())
+				fmt.Fprintf(w, "%s# Default is %v\n", ind, defaultValueString(flg.GetDefaultValue()))
 			}
 			w.WriteString(ind + parts[i] + ": ")
 			if isLastPart {
@@ -118,14 +118,32 @@ func writeFlags(group flag.FlagGroup, w *os.File) {
 	w.WriteString("```\n")
 }
 
+func defaultValueString(val any) string {
+	var value string
+	switch v := val.(type) {
+	case string:
+		value = v
+		if v == "" {
+			value = "empty"
+		}
+	default:
+		value = fmt.Sprintf("%v", v)
+	}
+	return value
+}
+
 func writeFlagValue(val any, ind string, w *os.File) {
 	switch v := val.(type) {
 	case string:
 		w.WriteString(v + "\n")
 	case []string:
-		w.WriteString("\n")
-		for _, vv := range v {
-			fmt.Fprintf(w, "%s- %s\n", ind, vv)
+		if len(v) == 0 {
+			w.WriteString("[]\n")
+		} else {
+			w.WriteString("\n")
+			for _, vv := range v {
+				fmt.Fprintf(w, "%s- %s\n", ind, vv)
+			}
 		}
 	default:
 		fmt.Fprintf(w, "%v\n", v)
