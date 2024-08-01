@@ -99,7 +99,7 @@ func writeFlags(group flag.FlagGroup, w *os.File) {
 			if len(lastParts) >= i+1 && parts[i] == lastParts[i] {
 				continue
 			}
-			ind := indentation(i)
+			ind := strings.Repeat("  ", i)
 			isLastPart := i == len(parts)-1
 			if isLastPart {
 				if flg.GetName() != "" {
@@ -110,37 +110,25 @@ func writeFlags(group flag.FlagGroup, w *os.File) {
 			w.WriteString(ind + parts[i] + ": ")
 			if isLastPart {
 				writeFlagValue(flg.GetDefaultValue(), ind, w)
-			} else {
-				w.WriteString("\n")
 			}
+			w.WriteString("\n")
 		}
 		lastParts = parts
 	}
 	w.WriteString("```\n")
 }
 
-const indent = "  "
-
-func indentation(n int) string {
-	var s string
-	for i := 0; i < n; i++ {
-		s += indent
-	}
-	return s
-}
-
 func writeFlagValue(val any, ind string, w *os.File) {
 	switch v := val.(type) {
 	case string:
-		w.WriteString(v + "\n\n")
+		w.WriteString(v + "\n")
 	case []string:
-		fmt.Fprintf(w, "\n")
+		w.WriteString("\n")
 		for _, vv := range v {
 			fmt.Fprintf(w, "%s- %s\n", ind, vv)
 		}
-		fmt.Fprintf(w, "\n")
 	default:
-		fmt.Fprintf(w, "%v\n\n", v)
+		fmt.Fprintf(w, "%v\n", v)
 	}
 
 }
