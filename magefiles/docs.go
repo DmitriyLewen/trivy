@@ -3,13 +3,24 @@
 package main
 
 import (
+	"cmp"
+	"fmt"
 	"os"
-
-	"github.com/spf13/cobra/doc"
+	"slices"
+	"strings"
 
 	"github.com/aquasecurity/trivy/pkg/commands"
 	"github.com/aquasecurity/trivy/pkg/flag"
 	"github.com/aquasecurity/trivy/pkg/log"
+	"github.com/spf13/cobra/doc"
+)
+
+const (
+	title       = "Config file"
+	description = "Trivy can be customized by tweaking a `trivy.yaml` file.\n" +
+		"The config path can be overridden by the `--config` flag.\n\n" +
+		"An example is [here][example].\n"
+	footer = "[example]: https://github.com/aquasecurity/trivy/tree/{{ git.tag }}/examples/trivy-conf/trivy.yaml"
 )
 
 // Generate CLI references
@@ -26,4 +37,98 @@ func main() {
 	if err := doc.GenMarkdownTree(cmd, "./docs/docs/references/configuration/cli"); err != nil {
 		log.Fatal("Fatal error", log.Err(err))
 	}
+	if err := generateConfigDocs("./docs/docs/references/configuration/config-file.md"); err != nil {
+		log.Fatal("Fatal error in config file generation", log.Err(err))
+	}
+}
+
+// generateConfigDocs creates markdown file for Trivy config.
+func generateConfigDocs(filename string) error {
+	// remoteFlags should contain Client and Server flags.
+	// NewClientFlags doesn't initialize `Listen` field
+	remoteFlags := flag.NewClientFlags()
+	remoteFlags.Listen = flag.ServerListenFlag.Clone()
+
+	var allFlagGroups = []flag.FlagGroup{
+		flag.NewGlobalFlagGroup(),
+		flag.NewCacheFlagGroup(),
+		remoteFlags,
+		flag.NewLicenseFlagGroup(),
+		flag.NewK8sFlagGroup(),
+	}
+
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	f.WriteString("# " + title + "\n\n")
+	f.WriteString(description + "\n")
+
+	for _, group := range allFlagGroups {
+		f.WriteString("## " + group.Name() + " Options \n")
+		writeFlags(group, f)
+	}
+
+	f.WriteString(footer)
+	return nil
+}
+
+func writeFlags(group flag.FlagGroup, w *os.File) {
+	flags := group.Flags()
+	slices.SortFunc(flags, func(a, b flag.Flagger) int {
+		return cmp.Compare(a.GetConfigName(), b.GetConfigName())
+	})
+	w.WriteString("\n```yaml\n")
+
+	var lastParts []string
+	for _, flg := range flags {
+		parts := strings.Split(flg.GetConfigName(), ".") // TODO think about this name
+		for i := range parts {
+			// Skip already added part
+			if len(lastParts) >= i+1 && parts[i] == lastParts[i] {
+				continue
+			}
+			ind := indentation(i)
+			isLastPart := i == len(parts)-1
+			if isLastPart {
+				fmt.Fprintf(w, "%s# Same as '--%s'\n", ind, flg.GetName())
+				fmt.Fprintf(w, "%s# Default is %v\n", ind, flg.GetDefaultValue())
+			}
+			w.WriteString(ind + parts[i] + ": ")
+			if isLastPart {
+				writeFlagValue(flg.GetDefaultValue(), ind, w)
+			} else {
+				w.WriteString("\n")
+			}
+		}
+		lastParts = parts
+	}
+	w.WriteString("```\n")
+}
+
+const indent = "  "
+
+func indentation(n int) string {
+	var s string
+	for i := 0; i < n; i++ {
+		s += indent
+	}
+	return s
+}
+
+func writeFlagValue(val any, ind string, w *os.File) {
+	switch v := val.(type) {
+	case string:
+		w.WriteString(v + "\n\n")
+	case []string:
+		fmt.Fprintf(w, "\n")
+		for _, vv := range v {
+			fmt.Fprintf(w, "%s- %s\n", ind, vv)
+		}
+		fmt.Fprintf(w, "\n")
+	default:
+		fmt.Fprintf(w, "%v\n\n", v)
+	}
+
 }
