@@ -13,17 +13,9 @@ cache:
   # Default is /path/to/cache
   dir: /path/to/cache
 
-# Same as '--config'
-# Default is trivy.yaml
-config: trivy.yaml
-
 # Same as '--debug'
 # Default is false
 debug: false
-
-# Same as '--generate-default-config'
-# Default is false
-generate-default-config: false
 
 # Same as '--insecure'
 # Default is false
@@ -36,10 +28,6 @@ quiet: false
 # Same as '--timeout'
 # Default is 5m0s
 timeout: 5m0s
-
-# Same as '--version'
-# Default is false
-version: false
 
 ```
 ## Cache Options 
@@ -109,7 +97,6 @@ license:
   # Default is 0.9
   confidenceLevel: 0.9
 
-  # Same as '--'
   # Default is [AGPL-1.0 AGPL-3.0 CC-BY-NC-1.0 CC-BY-NC-2.0 CC-BY-NC-2.5 CC-BY-NC-3.0 CC-BY-NC-4.0 CC-BY-NC-ND-1.0 CC-BY-NC-ND-2.0 CC-BY-NC-ND-2.5 CC-BY-NC-ND-3.0 CC-BY-NC-ND-4.0 CC-BY-NC-SA-1.0 CC-BY-NC-SA-2.0 CC-BY-NC-SA-2.5 CC-BY-NC-SA-3.0 CC-BY-NC-SA-4.0 Commons-Clause Facebook-2-Clause Facebook-3-Clause Facebook-Examples WTFPL]
   forbidden: 
   - AGPL-1.0
@@ -143,7 +130,6 @@ license:
   # Default is []
   ignored: 
 
-  # Same as '--'
   # Default is [AFL-1.1 AFL-1.2 AFL-2.0 AFL-2.1 AFL-3.0 Apache-1.0 Apache-1.1 Apache-2.0 Artistic-1.0-cl8 Artistic-1.0-Perl Artistic-1.0 Artistic-2.0 BSL-1.0 BSD-2-Clause-FreeBSD BSD-2-Clause-NetBSD BSD-2-Clause BSD-3-Clause-Attribution BSD-3-Clause-Clear BSD-3-Clause-LBNL BSD-3-Clause BSD-4-Clause BSD-4-Clause-UC BSD-Protection CC-BY-1.0 CC-BY-2.0 CC-BY-2.5 CC-BY-3.0 CC-BY-4.0 FTL ISC ImageMagick Libpng Lil-1.0 Linux-OpenIB LPL-1.02 LPL-1.0 MS-PL MIT NCSA OpenSSL PHP-3.01 PHP-3.0 PIL Python-2.0 Python-2.0-complete PostgreSQL SGI-B-1.0 SGI-B-1.1 SGI-B-2.0 Unicode-DFS-2015 Unicode-DFS-2016 Unicode-TOU UPL-1.0 W3C-19980720 W3C-20150513 W3C X11 Xnet Zend-2.0 zlib-acknowledgement Zlib ZPL-1.1 ZPL-2.0 ZPL-2.1]
   notice: 
   - AFL-1.1
@@ -211,11 +197,9 @@ license:
   - ZPL-2.0
   - ZPL-2.1
 
-  # Same as '--'
   # Default is []
   permissive: 
 
-  # Same as '--'
   # Default is [APSL-1.0 APSL-1.1 APSL-1.2 APSL-2.0 CDDL-1.0 CDDL-1.1 CPL-1.0 EPL-1.0 EPL-2.0 FreeImage IPL-1.0 MPL-1.0 MPL-1.1 MPL-2.0 Ruby]
   reciprocal: 
   - APSL-1.0
@@ -234,7 +218,6 @@ license:
   - MPL-2.0
   - Ruby
 
-  # Same as '--'
   # Default is [BCL CC-BY-ND-1.0 CC-BY-ND-2.0 CC-BY-ND-2.5 CC-BY-ND-3.0 CC-BY-ND-4.0 CC-BY-SA-1.0 CC-BY-SA-2.0 CC-BY-SA-2.5 CC-BY-SA-3.0 CC-BY-SA-4.0 GPL-1.0 GPL-2.0 GPL-2.0-with-autoconf-exception GPL-2.0-with-bison-exception GPL-2.0-with-classpath-exception GPL-2.0-with-font-exception GPL-2.0-with-GCC-exception GPL-3.0 GPL-3.0-with-autoconf-exception GPL-3.0-with-GCC-exception LGPL-2.0 LGPL-2.1 LGPL-3.0 NPL-1.0 NPL-1.1 OSL-1.0 OSL-1.1 OSL-2.0 OSL-2.1 OSL-3.0 QPL-1.0 Sleepycat]
   restricted: 
   - BCL
@@ -271,7 +254,6 @@ license:
   - QPL-1.0
   - Sleepycat
 
-  # Same as '--'
   # Default is [CC0-1.0 Unlicense 0BSD]
   unencumbered: 
   - CC0-1.0

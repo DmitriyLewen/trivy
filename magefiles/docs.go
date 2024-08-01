@@ -49,8 +49,15 @@ func generateConfigDocs(filename string) error {
 	remoteFlags := flag.NewClientFlags()
 	remoteFlags.Listen = flag.ServerListenFlag.Clone()
 
+	// These flags don't work from config file.
+	// Clear configName to skip them later.
+	globalFlags := flag.NewGlobalFlagGroup()
+	globalFlags.ConfigFile.ConfigName = ""
+	globalFlags.ShowVersion.ConfigName = ""
+	globalFlags.GenerateDefaultConfig.ConfigName = ""
+
 	var allFlagGroups = []flag.FlagGroup{
-		flag.NewGlobalFlagGroup(),
+		globalFlags,
 		flag.NewCacheFlagGroup(),
 		remoteFlags,
 		flag.NewLicenseFlagGroup(),
@@ -83,6 +90,9 @@ func writeFlags(group flag.FlagGroup, w *os.File) {
 
 	var lastParts []string
 	for _, flg := range flags {
+		if flg.GetConfigName() == "" {
+			continue
+		}
 		parts := strings.Split(flg.GetConfigName(), ".") // TODO think about this name
 		for i := range parts {
 			// Skip already added part
@@ -92,7 +102,9 @@ func writeFlags(group flag.FlagGroup, w *os.File) {
 			ind := indentation(i)
 			isLastPart := i == len(parts)-1
 			if isLastPart {
-				fmt.Fprintf(w, "%s# Same as '--%s'\n", ind, flg.GetName())
+				if flg.GetName() != "" {
+					fmt.Fprintf(w, "%s# Same as '--%s'\n", ind, flg.GetName())
+				}
 				fmt.Fprintf(w, "%s# Default is %v\n", ind, flg.GetDefaultValue())
 			}
 			w.WriteString(ind + parts[i] + ": ")
