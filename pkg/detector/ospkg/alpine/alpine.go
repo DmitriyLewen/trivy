@@ -85,6 +85,7 @@ func (s *Scanner) Detect(ctx context.Context, osVer string, repo *ftypes.Reposit
 
 	var vulns []types.DetectedVulnerability
 	for _, pkg := range pkgs {
+		log.WithPrefix("test").Debug("Detecting vulns for package", log.String("pkg_name", pkg.Name))
 		srcName := pkg.SrcName
 		if srcName == "" {
 			srcName = pkg.Name
@@ -100,10 +101,12 @@ func (s *Scanner) Detect(ctx context.Context, osVer string, repo *ftypes.Reposit
 			continue
 		}
 
+		log.WithPrefix("test").Debug("Advisories found", log.String("pkg_name", pkg.Name), log.Int("count", len(advisories)))
 		for _, adv := range advisories {
 			if !s.isVulnerable(ctx, sourceVersion, adv) {
 				continue
 			}
+			log.WithPrefix("test").Debug("Vulnerability was added", log.String("pkg_name", pkg.Name), log.String("CVE", adv.VulnerabilityID))
 			vulns = append(vulns, types.DetectedVulnerability{
 				VulnerabilityID:  adv.VulnerabilityID,
 				PkgID:            pkg.ID,
@@ -116,6 +119,7 @@ func (s *Scanner) Detect(ctx context.Context, osVer string, repo *ftypes.Reposit
 				DataSource:       adv.DataSource,
 			})
 		}
+
 	}
 	return vulns, nil
 }

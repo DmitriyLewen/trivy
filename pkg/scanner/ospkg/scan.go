@@ -57,6 +57,7 @@ func (s *scanner) Scan(ctx context.Context, target types.ScanTarget, opts types.
 		return result, false, xerrors.Errorf("failed vulnerability detection of OS packages: %w", err)
 	}
 	result.Vulnerabilities = vulns
+	log.WithPrefix("test").Debug("Vulns found", log.Int("count", len(result.Vulnerabilities)))
 
 	return result, eosl, nil
 }
