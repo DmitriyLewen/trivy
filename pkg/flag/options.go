@@ -29,8 +29,35 @@ import (
 	"github.com/aquasecurity/trivy/pkg/version/app"
 )
 
+type CustomMapFlag map[string][]string
+
+func (m *CustomMapFlag) String() string {
+	return fmt.Sprintf("%v", map[string][]string(*m))
+}
+
+func (m *CustomMapFlag) Set(value string) error {
+	mm := *m
+	if mm == nil {
+		mm = make(map[string][]string)
+	}
+	parts := strings.SplitN(value, "=", 2)
+	if len(parts) != 2 {
+		return fmt.Errorf("invalid format, expected 'key=value1,value2'")
+	}
+	key := parts[0]
+	values := strings.Split(parts[1], ",")
+	mm[key] = values
+
+	*m = mm
+	return nil
+}
+
+func (m *CustomMapFlag) Type() string {
+	return "map[string][]string"
+}
+
 type FlagType interface {
-	int | string | []string | bool | time.Duration | float64 | map[string][]string
+	int | string | []string | bool | time.Duration | float64 | CustomMapFlag
 }
 
 type Flag[T FlagType] struct {
@@ -161,8 +188,9 @@ func (f *Flag[T]) cast(val any) any {
 		return cast.ToFloat64(val)
 	case time.Duration:
 		return cast.ToDuration(val)
-	case map[string][]string:
-		return cast.ToStringMapStringSlice(val)
+	case CustomMapFlag:
+		m := cast.ToStringMapStringSlice(val)
+		return CustomMapFlag(m)
 	case []string:
 		if s, ok := val.(string); ok && strings.Contains(s, ",") {
 			// Split environmental variables by comma as it is not done by viper.
@@ -279,6 +307,8 @@ func (f *Flag[T]) Add(cmd *cobra.Command) {
 			}
 		}
 		flags.StringSliceP(f.Name, f.Shorthand, v, usage)
+	case CustomMapFlag:
+		flags.Var(&v, f.Name, f.Usage)
 	case bool:
 		flags.BoolP(f.Name, f.Shorthand, v, f.Usage)
 	case time.Duration:
@@ -821,7 +851,7 @@ func (f *Flags) ToOptions(args []string) (Options, error) {
 	if f.RepoFlagGroup != nil {
 		opts.RepoOptions, err = f.RepoFlagGroup.ToOptions()
 		if err != nil {
-			return Options{}, xerrors.Errorf("repo flag error: %w", err)
+			return Options{}, xerrors.Errorf("rego flag error: %w", err)
 		}
 	}
 

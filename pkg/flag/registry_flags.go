@@ -31,7 +31,8 @@ var (
 		ConfigName: "registry.token",
 		Usage:      "registry token",
 	}
-	RegistryMirrorsFlag = Flag[map[string][]string]{
+	RegistryMirrorsFlag = Flag[CustomMapFlag]{
+		Name:       "registry-mirrors",
 		ConfigName: "registry.mirrors",
 		Usage:      "map of hosts and registries for them.",
 	}
@@ -42,7 +43,7 @@ type RegistryFlagGroup struct {
 	Password        *Flag[[]string]
 	PasswordStdin   *Flag[bool]
 	RegistryToken   *Flag[string]
-	RegistryMirrors *Flag[map[string][]string]
+	RegistryMirrors *Flag[CustomMapFlag]
 }
 
 type RegistryOptions struct {
@@ -103,10 +104,11 @@ func (f *RegistryFlagGroup) ToOptions() (RegistryOptions, error) {
 			Password: strings.TrimSpace(passwords[i]),
 		})
 	}
+	mirrors := f.RegistryMirrors.Value()
 
 	return RegistryOptions{
 		Credentials:     credentials,
 		RegistryToken:   f.RegistryToken.Value(),
-		RegistryMirrors: f.RegistryMirrors.Value(),
+		RegistryMirrors: mirrors,
 	}, nil
 }
