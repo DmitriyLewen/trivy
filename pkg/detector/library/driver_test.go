@@ -54,6 +54,31 @@ func TestDriver_Detect(t *testing.T) {
 			},
 		},
 		{
+			name: "semver comparer for GHSA advisories",
+			fixtures: []string{
+				"testdata/fixtures/npm.yaml",
+				"testdata/fixtures/data-source.yaml",
+			},
+			libType: ftypes.Npm,
+			args: args{
+				pkgName: "multer",
+				pkgVer:  "1.4.5-lts.1",
+			},
+			want: []types.DetectedVulnerability{
+				{
+					VulnerabilityID:  "CVE-2025-47944",
+					PkgName:          "multer",
+					InstalledVersion: "1.4.5-lts.1",
+					FixedVersion:     "2.0.0",
+					DataSource: &dbTypes.DataSource{
+						ID:   vulnerability.GHSA,
+						Name: "GitHub Security Advisory npm",
+						URL:  "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm",
+					},
+				},
+			},
+		},
+		{
 			name: "case-sensitive go package",
 			fixtures: []string{
 				"testdata/fixtures/go.yaml",

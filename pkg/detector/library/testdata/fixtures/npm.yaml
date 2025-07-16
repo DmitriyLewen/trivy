@@ -1,0 +1,20 @@
+- bucket: "npm::GitHub Security Advisory npm"
+  pairs:
+    - bucket: multer
+      pairs:
+        - key: CVE-2025-47944
+          value:
+            PatchedVersions:
+              - 2.0.0
+            VulnerableVersions:
+              - ">=1.4.4-lts.1, <2.0.0"
+- bucket: "npm::Node.js Ecosystem Security Working Group"
+  pairs:
+    - bucket: multer
+      pairs:
+        - key: CVE-2025-47945 # changed for test
+          value:
+            PatchedVersions:
+              - 2.0.0
+            VulnerableVersions:
+              - ">=1.4.4-lts.1, <2.0.0"

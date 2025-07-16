@@ -122,7 +122,7 @@ func (d *Driver) DetectVulnerabilities(pkgID, pkgName, pkgVer string) ([]types.D
 
 	var vulns []types.DetectedVulnerability
 	for _, adv := range advisories {
-		if !d.comparer.IsVulnerable(pkgVer, adv) {
+		if !d.IsVulnerable(pkgVer, adv) {
 			continue
 		}
 
@@ -139,6 +139,14 @@ func (d *Driver) DetectVulnerabilities(pkgID, pkgName, pkgVer string) ([]types.D
 	}
 
 	return vulns, nil
+}
+
+func (d *Driver) IsVulnerable(pkgVer string, adv dbTypes.Advisory) bool {
+	comparer := d.comparer
+	if adv.DataSource.ID == vulnerability.GHSA {
+		comparer = compare.GenericComparer{}
+	}
+	return comparer.IsVulnerable(pkgVer, adv)
 }
 
 func createFixedVersions(advisory dbTypes.Advisory) string {

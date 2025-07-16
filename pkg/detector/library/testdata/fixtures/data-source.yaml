@@ -25,8 +25,13 @@
         ID: "ghsa"
         Name: "GitHub Security Advisory Pip"
         URL: "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Apip"
-    - key: "go::GitHub Security Advisory Go"
+    - key: "npm::GitHub Security Advisory npm"
       value:
         ID: "ghsa"
-        Name: "GitHub Security Advisory Go"
-        URL: "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Ago"
+        Name: "GitHub Security Advisory npm"
+        URL: "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+    - key: "npm::Node.js Ecosystem Security Working Group"
+      value:
+        ID: "nodejs-security-wg"
+        Name: "Node.js Ecosystem Security Working Group"
+        URL: "https://github.com/nodejs/security-wg"
