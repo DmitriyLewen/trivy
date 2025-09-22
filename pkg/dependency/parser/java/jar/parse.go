@@ -5,7 +5,6 @@ import (
 	"bufio"
 	"crypto/sha1" // nolint:gosec
 	"encoding/hex"
-	"errors"
 	"io"
 	"os"
 	"path"
@@ -14,6 +13,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/aquasecurity/trivy/pkg/digest"
 	mavenversion "github.com/masahiro331/go-mvn-version"
 	"golang.org/x/xerrors"
 
@@ -86,78 +86,82 @@ func (p *Parser) Parse(r xio.ReadSeekerAt) ([]ftypes.Package, []ftypes.Dependenc
 func (p *Parser) parseArtifact(filePath string, size int64, r xio.ReadSeekerAt) ([]ftypes.Package, []ftypes.Dependency, error) {
 	p.logger.Debug("Parsing Java artifacts...", log.FilePath(filePath))
 
-	// Try to extract artifactId and version from the file name
+	// Extract artifactId, version (if possible) and digest
 	// e.g. spring-core-5.3.4-SNAPSHOT.jar => sprint-core, 5.3.4-SNAPSHOT
-	fileName := filepath.Base(filePath)
-	fileProps := parseFileName(filePath)
+	fileProps, err := fileProperties(r, filePath)
+	if err != nil {
+		return nil, nil, xerrors.Errorf("failed to get file properties: %w", err)
+	}
 
-	pkgs, m, foundPomProps, err := p.traverseZip(filePath, size, r, fileProps)
+	pkgs, err := p.traverseZip(filePath, size, r, fileProps)
 	if err != nil {
 		return nil, nil, xerrors.Errorf("zip error: %w", err)
 	}
 
-	// If pom.properties is found, it should be preferred than MANIFEST.MF.
-	if foundPomProps {
-		return pkgs, nil, nil
-	}
-
-	manifestProps := m.properties(filePath)
-	if p.offline {
-		// In offline mode, we will not check if the artifact information is correct.
-		if !manifestProps.Valid() {
-			p.logger.Debug("Unable to identify POM in offline mode", log.String("file", fileName))
-			return pkgs, nil, nil
-		}
-		return append(pkgs, manifestProps.Package()), nil, nil
-	}
-
-	if manifestProps.Valid() {
-		// Even if MANIFEST.MF is found, the groupId and artifactId might not be valid.
-		// We have to make sure that the artifact exists actually.
-		if ok, _ := p.client.Exists(manifestProps.GroupID, manifestProps.ArtifactID); ok {
-			// If groupId and artifactId are valid, they will be returned.
-			return append(pkgs, manifestProps.Package()), nil, nil
-		}
-	}
-
-	// If groupId and artifactId are not found, call Maven Central's search API with SHA-1 digest.
-	props, err := p.searchBySHA1(r, filePath)
-	if err == nil {
-		return append(pkgs, props.Package()), nil, nil
-	} else if !errors.Is(err, ArtifactNotFoundErr) {
-		return nil, nil, xerrors.Errorf("failed to search by SHA1: %w", err)
-	}
-
-	p.logger.Debug("No such POM in the central repositories", log.String("file", fileName))
-
-	// Return when artifactId or version from the file name are empty
-	if fileProps.ArtifactID == "" || fileProps.Version == "" {
-		return pkgs, nil, nil
-	}
-
-	// Try to search groupId by artifactId via sonatype API
-	// When some artifacts have the same groupIds, it might result in false detection.
-	fileProps.GroupID, err = p.client.SearchByArtifactID(fileProps.ArtifactID, fileProps.Version)
-	if err == nil {
-		p.logger.Debug("POM was determined in a heuristic way", log.String("file", fileName),
-			log.String("artifact", fileProps.String()))
-		pkgs = append(pkgs, fileProps.Package())
-	} else if !errors.Is(err, ArtifactNotFoundErr) {
-		return nil, nil, xerrors.Errorf("failed to search by artifact id: %w", err)
-	}
-
 	return pkgs, nil, nil
+
+	//// If pom.properties is found, it should be preferred than MANIFEST.MF.
+	//if foundPomProps {
+	//	return pkgs, nil, nil
+	//}
+	//
+	//manifestProps := m.properties(filePath)
+	//if p.offline {
+	//	// In offline mode, we will not check if the artifact information is correct.
+	//	if !manifestProps.Valid() {
+	//		p.logger.Debug("Unable to identify POM in offline mode", log.String("file", fileName))
+	//		return pkgs, nil, nil
+	//	}
+	//	return append(pkgs, manifestProps.Package()), nil, nil
+	//}
+	//
+	//if manifestProps.Valid() {
+	//	// Even if MANIFEST.MF is found, the groupId and artifactId might not be valid.
+	//	// We have to make sure that the artifact exists actually.
+	//	if ok, _ := p.client.Exists(manifestProps.GroupID, manifestProps.ArtifactID); ok {
+	//		// If groupId and artifactId are valid, they will be returned.
+	//		return append(pkgs, manifestProps.Package()), nil, nil
+	//	}
+	//}
+	//
+	//// If groupId and artifactId are not found, call Maven Central's search API with SHA-1 digest.
+	//props, err := p.searchBySHA1(r, filePath)
+	//if err == nil {
+	//	return append(pkgs, props.Package()), nil, nil
+	//} else if !errors.Is(err, ArtifactNotFoundErr) {
+	//	return nil, nil, xerrors.Errorf("failed to search by SHA1: %w", err)
+	//}
+	//
+	//p.logger.Debug("No such POM in the central repositories", log.String("file", fileName))
+	//
+	//// Return when artifactId or version from the file name are empty
+	//if fileProps.ArtifactID == "" || fileProps.Version == "" {
+	//	return pkgs, nil, nil
+	//}
+	//
+	//// Try to search groupId by artifactId via sonatype API
+	//// When some artifacts have the same groupIds, it might result in false detection.
+	//fileProps.GroupID, err = p.client.SearchByArtifactID(fileProps.ArtifactID, fileProps.Version)
+	//if err == nil {
+	//	p.logger.Debug("POM was determined in a heuristic way", log.String("file", fileName),
+	//		log.String("artifact", fileProps.String()))
+	//	pkgs = append(pkgs, fileProps.Package())
+	//} else if !errors.Is(err, ArtifactNotFoundErr) {
+	//	return nil, nil, xerrors.Errorf("failed to search by artifact id: %w", err)
+	//}
+	//
+	//return pkgs, nil, nil
 }
 
 func (p *Parser) traverseZip(filePath string, size int64, r xio.ReadSeekerAt, fileProps Properties) (
-	[]ftypes.Package, manifest, bool, error) {
+	[]ftypes.Package, error) {
 	var pkgs []ftypes.Package
-	var m manifest
 	var foundPomProps bool
+	rootPkgProps := fileProps
 
 	zr, err := zip.NewReader(r, size)
 	if err != nil {
-		return nil, manifest{}, false, xerrors.Errorf("zip error: %w", err)
+		return nil, xerrors.Errorf("zip error: %w", err)
 	}
 
 	for _, fileInJar := range zr.File {
@@ -165,21 +169,28 @@ func (p *Parser) traverseZip(filePath string, size int64, r xio.ReadSeekerAt, fi
 		case filepath.Base(fileInJar.Name) == "pom.properties":
 			props, err := parsePomProperties(fileInJar, filePath)
 			if err != nil {
-				return nil, manifest{}, false, xerrors.Errorf("failed to parse %s: %w", fileInJar.Name, err)
+				return nil, xerrors.Errorf("failed to parse %s: %w", fileInJar.Name, err)
 			}
 			// Validation of props to avoid getting packages with empty Name/Version
 			if props.Valid() {
-				pkgs = append(pkgs, props.Package())
-
 				// Check if the pom.properties is for the original JAR/WAR/EAR
 				if fileProps.ArtifactID == props.ArtifactID && fileProps.Version == props.Version {
+					props.Digest = rootPkgProps.Digest
+					rootPkgProps = props
 					foundPomProps = true
+					continue
 				}
+				pkgs = append(pkgs, props.Package(true))
 			}
 		case filepath.Base(fileInJar.Name) == "MANIFEST.MF":
-			m, err = parseManifest(fileInJar)
+			m, err := parseManifest(fileInJar)
 			if err != nil {
-				return nil, manifest{}, false, xerrors.Errorf("failed to parse MANIFEST.MF: %w", err)
+				return nil, xerrors.Errorf("failed to parse MANIFEST.MF: %w", err)
+			}
+			manifestProps := m.properties(filePath)
+			if rootPkgProps.GroupID == "" && manifestProps.Valid() {
+				manifestProps.Digest = rootPkgProps.Digest
+				rootPkgProps = manifestProps
 			}
 		case isArtifact(fileInJar.Name):
 			innerPkgs, _, err := p.parseInnerJar(fileInJar, filePath) // TODO process inner deps
@@ -190,7 +201,10 @@ func (p *Parser) traverseZip(filePath string, size int64, r xio.ReadSeekerAt, fi
 			pkgs = append(pkgs, innerPkgs...)
 		}
 	}
-	return pkgs, m, foundPomProps, nil
+
+	pkgs = append(pkgs, rootPkgProps.Package(foundPomProps))
+
+	return pkgs, nil
 }
 
 func (p *Parser) parseInnerJar(zf *zip.File, rootPath string) ([]ftypes.Package, []ftypes.Dependency, error) {
@@ -256,18 +270,29 @@ func isArtifact(name string) bool {
 	return false
 }
 
-func parseFileName(filePath string) Properties {
-	fileName := filepath.Base(filePath)
-	packageVersion := jarFileRegEx.FindStringSubmatch(fileName)
-	if len(packageVersion) != 3 {
-		return Properties{}
+func fileProperties(r xio.ReadSeekerAt, filePath string) (Properties, error) {
+	if _, err := r.Seek(0, io.SeekStart); err != nil {
+		return Properties{}, xerrors.Errorf("file seek error: %w", err)
 	}
 
-	return Properties{
-		ArtifactID: packageVersion[1],
-		Version:    packageVersion[2],
-		FilePath:   filePath,
+	h := sha1.New() // nolint:gosec
+	if _, err := io.Copy(h, r); err != nil {
+		return Properties{}, xerrors.Errorf("unable to calculate SHA-1: %w", err)
 	}
+	props := Properties{
+		FilePath: filePath,
+		Digest:   digest.NewDigest(digest.SHA1, h),
+	}
+
+	fileName := filepath.Base(filePath)
+	packageVersion := jarFileRegEx.FindStringSubmatch(fileName)
+	if len(packageVersion) == 3 {
+		props.ArtifactID = packageVersion[1]
+		props.Version = packageVersion[2]
+
+	}
+
+	return props, nil
 }
 
 func parsePomProperties(f *zip.File, filePath string) (Properties, error) {
@@ -439,6 +464,7 @@ func (m manifest) determineVersion() (string, error) {
 	return strings.TrimSpace(version), nil
 }
 
+// TODO move to analyzer
 func removePackageDuplicates(pkgs []ftypes.Package) []ftypes.Package {
 	// name::filePath => versions
 	var uniq = make(map[string][]mavenversion.Version)
