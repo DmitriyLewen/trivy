@@ -1,6 +1,7 @@
 package language
 
 import (
+	"cmp"
 	"io"
 
 	"golang.org/x/xerrors"
@@ -101,7 +102,7 @@ func toApplication(fileType types.LangType, filePath, libFilePath string, r xio.
 			pkgs[i].FilePath = libFilePath
 		}
 		pkgs[i].DependsOn = deps[pkg.ID]
-		pkgs[i].Digest = d
+		pkgs[i].Digest = cmp.Or(pkgs[i].Digest, d)
 		pkgs[i].Indirect = isIndirect(pkg.Relationship) // For backward compatibility
 
 		for j, license := range pkg.Licenses {

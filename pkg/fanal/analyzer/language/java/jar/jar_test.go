@@ -109,9 +109,11 @@ func Test_javaLibraryAnalyzer_Analyze(t *testing.T) {
 						FilePath: "testdata/test.jar",
 						Packages: types.Packages{
 							{
+								ID:       "org.apache.tomcat.embed:tomcat-embed-websocket:9.0.65",
 								Name:     "org.apache.tomcat.embed:tomcat-embed-websocket",
 								FilePath: "testdata/test.jar",
 								Version:  "9.0.65",
+								Digest:   "sha1:bd70dfeb39cc83c6934be24fa377b21e541dbe76",
 							},
 						},
 					},
@@ -131,7 +133,11 @@ func Test_javaLibraryAnalyzer_Analyze(t *testing.T) {
 			require.NoError(t, err)
 			javadb.Init("testdata", []name.Reference{repo}, true, false, types.RegistryOptions{Insecure: false})
 
-			a := javaLibraryAnalyzer{}
+			a, err := newJavaLibraryAnalyzer(analyzer.AnalyzerOptions{
+				Parallel: 1,
+			})
+			require.NoError(t, err)
+
 			ctx := t.Context()
 
 			mfs := mapfs.New()
