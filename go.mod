@@ -91,7 +91,7 @@ require (
 	github.com/openvex/go-vex v0.2.7
 	github.com/owenrumney/go-sarif/v2 v2.3.3
 	github.com/package-url/packageurl-go v0.1.3
-	github.com/quasilyte/go-ruleguard/dsl v0.3.22
+	github.com/quasilyte/go-ruleguard/dsl v0.3.23
 	github.com/rust-secure-code/go-rustaudit v0.0.0-20250226111315-e20ec32e963c
 	github.com/samber/lo v1.51.0
 	github.com/sassoftware/go-rpmutils v0.4.0
@@ -125,7 +125,7 @@ require (
 	google.golang.org/protobuf v1.36.9
 	gopkg.in/yaml.v3 v3.0.1
 	helm.sh/helm/v3 v3.19.0
-	k8s.io/api v0.34.0
+	k8s.io/api v0.34.1
 	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397
 	modernc.org/sqlite v1.39.0
 )
@@ -480,7 +480,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	k8s.io/apiextensions-apiserver v0.34.0 // indirect
-	k8s.io/apimachinery v0.34.0 // indirect
+	k8s.io/apimachinery v0.34.1 // indirect
 	k8s.io/apiserver v0.34.0 // indirect
 	k8s.io/cli-runtime v0.34.0 // indirect
 	k8s.io/client-go v0.34.0 // indirect
