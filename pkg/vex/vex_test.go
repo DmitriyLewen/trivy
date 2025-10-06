@@ -172,7 +172,8 @@ func TestFilter(t *testing.T) {
 	tr, d := setUpRegistry(t)
 
 	uuid.SetFakeUUID(t, "3ff14136-e09f-4df9-80ea-%012d")
-	testCycloneDXSBOM := createCycloneDXBOMWithSpringComponent()
+	testCycloneDXSBOM := createBOMWithSpringComponent(true)
+	testSPDXSBOM := createBOMWithSpringComponent(false)
 
 	type args struct {
 		report *types.Report
@@ -366,6 +367,38 @@ func TestFilter(t *testing.T) {
 			want: &types.Report{
 				ArtifactType: ftypes.TypeCycloneDX,
 				BOM:          testCycloneDXSBOM,
+				Results: []types.Result{
+					springResult(types.Result{
+						Vulnerabilities:  []types.DetectedVulnerability{},
+						ModifiedFindings: []types.ModifiedFinding{modifiedFinding(vuln1, codeNotReachable, "CycloneDX VEX")},
+					}),
+				},
+			},
+		},
+		{
+			name: "SPDX SBOM with CycloneDX VEX",
+			args: args{
+				report: &types.Report{
+					ArtifactType: ftypes.TypeCycloneDX,
+					BOM:          testSPDXSBOM,
+					Results: []types.Result{
+						springResult(types.Result{
+							Vulnerabilities: []types.DetectedVulnerability{vuln1},
+						}),
+					},
+				},
+				opts: vex.Options{
+					Sources: []vex.Source{
+						{
+							Type:     vex.TypeFile,
+							FilePath: "testdata/cyclonedx.json",
+						},
+					},
+				},
+			},
+			want: &types.Report{
+				ArtifactType: ftypes.TypeCycloneDX,
+				BOM:          testSPDXSBOM,
 				Results: []types.Result{
 					springResult(types.Result{
 						Vulnerabilities:  []types.DetectedVulnerability{},
@@ -661,17 +694,25 @@ func ociPURLString(ts *httptest.Server, d v1.Hash) string {
 	return p.String()
 }
 
-func createCycloneDXBOMWithSpringComponent() *core.BOM {
+func createBOMWithSpringComponent(withBomRef bool) *core.BOM {
 	bom := core.NewBOM(core.Options{})
 	bom.SerialNumber = "urn:uuid:3e671687-395b-41f5-a30f-a58921a69b79"
 	bom.Version = 1
+	pkgIdentifier := ftypes.PkgIdentifier{
+		// UID:    "", // Reusing BOM doesn't have UID fields for components.
+		PURL: springPackage.Identifier.PURL,
+	}
+	if withBomRef {
+		pkgIdentifier.BOMRef = springPackage.Identifier.BOMRef
+	}
+
 	// Add the spring component to match vuln1's BOM-Ref
 	springComponent := &core.Component{
 		Type:          core.TypeLibrary,
 		Name:          springPackage.Identifier.PURL.Name,
 		Group:         springPackage.Identifier.PURL.Namespace,
 		Version:       springPackage.Version,
-		PkgIdentifier: springPackage.Identifier,
+		PkgIdentifier: pkgIdentifier,
 	}
 	bom.AddComponent(springComponent)
 	return bom

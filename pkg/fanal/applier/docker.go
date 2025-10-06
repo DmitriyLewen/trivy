@@ -227,7 +227,11 @@ func ApplyLayers(layers []ftypes.BlobInfo) ftypes.ArtifactDetail {
 		if mergedLayer.OS.Family != "" && pkg.Identifier.PURL == nil {
 			mergedLayer.Packages[i].Identifier.PURL = newPURL(mergedLayer.OS.Family, types.Metadata{OS: &mergedLayer.OS}, pkg)
 		}
-		mergedLayer.Packages[i].Identifier.UID = dependency.UID("", pkg)
+
+		// May be populated when scanning SBOM files
+		if mergedLayer.Packages[i].Identifier.UID == "" {
+			mergedLayer.Packages[i].Identifier.UID = dependency.UID("", pkg)
+		}
 
 		// Only debian packages
 		if licenses, ok := dpkgLicenses[pkg.Name]; ok {
@@ -256,7 +260,12 @@ func ApplyLayers(layers []ftypes.BlobInfo) ftypes.ArtifactDetail {
 			if pkg.Identifier.PURL == nil {
 				app.Packages[i].Identifier.PURL = newPURL(app.Type, types.Metadata{}, pkg)
 			}
-			app.Packages[i].Identifier.UID = dependency.UID(app.FilePath, pkg)
+
+			// May be populated when scanning SBOM files
+			if app.Packages[i].Identifier.UID == "" {
+				app.Packages[i].Identifier.UID = dependency.UID(app.FilePath, pkg)
+			}
+
 		}
 	}
 

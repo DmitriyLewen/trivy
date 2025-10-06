@@ -144,6 +144,10 @@ func (m *Decoder) decodeComponents(ctx context.Context, sbom *types.SBOM) error 
 				return xerrors.Errorf("failed to decode package: %w", err)
 			}
 			m.pkgs[id] = pkg
+
+			// Overwrite component with UID for package
+			c.PkgIdentifier.UID = dependency.UID(pkg.FilePath, *pkg)
+			m.bom.AddComponent(c)
 		}
 	}
 
