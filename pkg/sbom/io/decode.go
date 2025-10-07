@@ -143,11 +143,12 @@ func (m *Decoder) decodeComponents(ctx context.Context, sbom *types.SBOM) error 
 			} else if err != nil {
 				return xerrors.Errorf("failed to decode package: %w", err)
 			}
-			m.pkgs[id] = pkg
 
-			// Overwrite component with UID for package
-			c.PkgIdentifier.UID = dependency.UID(pkg.FilePath, *pkg)
+			// Overwrite component with package UID
+			c.PkgIdentifier.UID = pkg.Identifier.UID
 			m.bom.AddComponent(c)
+
+			m.pkgs[id] = pkg
 		}
 	}
 
@@ -247,6 +248,9 @@ func (m *Decoder) decodePackage(ctx context.Context, c *core.Component) (*ftypes
 	if p.Class() == types.ClassOSPkg {
 		m.fillSrcPkg(ctx, c, pkg)
 	}
+
+	// Calculate UID for package
+	pkg.Identifier.UID = dependency.UID(pkg.FilePath, *pkg)
 
 	return pkg, nil
 }
