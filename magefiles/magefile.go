@@ -112,12 +112,6 @@ func (Tool) Install() error {
 	return sh.Run("go", "install", "tool")
 }
 
-// Wire generates the wire_gen.go file for each package
-func Wire() error {
-	mg.Deps(Tool{}.Install) // Install wire
-	return sh.RunV("go", "tool", "wire", "gen", "./pkg/commands/...", "./pkg/rpc/...", "./pkg/k8s/...")
-}
-
 type Protoc mg.Namespace
 
 // Generate parses PROTO_FILES and generates the Go code for client/server mode
@@ -233,7 +227,7 @@ func (t Test) Integration() error {
 // K8s runs k8s integration tests
 func (t Test) K8s() error {
 	mg.Deps(Tool{}.Install) // Install kind
-	err := sh.RunWithV(ENV, "kind", "create", "cluster", "--name", "kind-test")
+	err := sh.RunWithV(ENV, "kind", "create", "cluster", "--name", "kind-test", "--image", "kindest/node:v1.27.1@sha256:b7d12ed662b873bd8510879c1846e87c7e676a79fefc93e17b2a52989d3ff42b")
 	if err != nil {
 		return err
 	}

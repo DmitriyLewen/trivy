@@ -15,7 +15,6 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
-	"github.com/google/wire"
 	"github.com/samber/lo"
 	"golang.org/x/xerrors"
 
@@ -34,15 +33,7 @@ import (
 
 const artifactVersion = 0
 
-var (
-	ArtifactSet = wire.NewSet(
-		walker.NewFS,
-		wire.Bind(new(Walker), new(*walker.FS)),
-		NewArtifact,
-	)
-
-	_ Walker = (*walker.FS)(nil)
-)
+var _ Walker = (*walker.FS)(nil)
 
 type Walker interface {
 	Walk(root string, opt walker.Option, fn walker.WalkFunc) error
@@ -91,6 +82,8 @@ func NewArtifact(rootPath string, c cache.ArtifactCache, w Walker, opt artifact.
 
 	// Check if the directory is a git repository and extract metadata
 	if art.isClean, art.repoMetadata, err = extractGitInfo(art.rootPath); err == nil {
+		// If git info is detected, change artifact type to repository
+		art.artifactOption.Type = types.TypeRepository
 		if art.isClean {
 			art.logger.Debug("Using the latest commit hash for calculating cache key",
 				log.String("commit_hash", art.repoMetadata.Commit))
@@ -182,7 +175,7 @@ func (a Artifact) Inspect(ctx context.Context) (artifact.Reference, error) {
 
 	// Check if the cache exists only when it's a clean git repository
 	if a.isClean && a.repoMetadata.Commit != "" {
-		_, missingBlobs, err := a.cache.MissingBlobs(cacheKey, []string{cacheKey})
+		_, missingBlobs, err := a.cache.MissingBlobs(ctx, cacheKey, []string{cacheKey})
 		if err != nil {
 			return artifact.Reference{}, xerrors.Errorf("unable to get missing blob: %w", err)
 		}
@@ -260,7 +253,7 @@ func (a Artifact) Inspect(ctx context.Context) (artifact.Reference, error) {
 		return artifact.Reference{}, xerrors.Errorf("failed to call hooks: %w", err)
 	}
 
-	if err = a.cache.PutBlob(cacheKey, blobInfo); err != nil {
+	if err = a.cache.PutBlob(ctx, cacheKey, blobInfo); err != nil {
 		return artifact.Reference{}, xerrors.Errorf("failed to store blob (%s) in cache: %w", cacheKey, err)
 	}
 
@@ -343,7 +336,7 @@ func (a Artifact) Clean(reference artifact.Reference) error {
 	if a.isClean && a.repoMetadata.Commit != "" {
 		return nil
 	}
-	return a.cache.DeleteBlobs(reference.BlobIDs)
+	return a.cache.DeleteBlobs(context.TODO(), reference.BlobIDs)
 }
 
 func (a Artifact) calcCacheKey() (string, error) {
