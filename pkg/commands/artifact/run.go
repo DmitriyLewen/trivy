@@ -18,6 +18,7 @@ import (
 	"github.com/aquasecurity/trivy/pkg/db"
 	"github.com/aquasecurity/trivy/pkg/extension"
 	"github.com/aquasecurity/trivy/pkg/fanal/analyzer"
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
 	"github.com/aquasecurity/trivy/pkg/fanal/artifact"
 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
 	"github.com/aquasecurity/trivy/pkg/fanal/walker"
@@ -68,7 +69,8 @@ type ScannerConfig struct {
 	RemoteCacheOptions cache.RemoteOptions
 
 	// Client/Server options
-	ServerOption client.ServiceOption
+	ServerOption          client.ServiceOption
+	RemoveResolverOptions resolver.RemoteOptions
 
 	// Artifact options
 	ArtifactOption artifact.Option

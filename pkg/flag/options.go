@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
 	"github.com/samber/lo"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -534,6 +535,15 @@ func (o *Options) CacheOpts() cache.Options {
 // RemoteCacheOpts returns options for remote scan cache
 func (o *Options) RemoteCacheOpts() cache.RemoteOptions {
 	return cache.RemoteOptions{
+		ServerAddr:    o.ServerAddr,
+		CustomHeaders: o.CustomHeaders,
+		PathPrefix:    o.PathPrefix,
+	}
+}
+
+// RemoteResolverOpts returns options for remote scan resolver
+func (o *Options) RemoteResolverOpts() resolver.RemoteOptions {
+	return resolver.RemoteOptions{
 		ServerAddr:    o.ServerAddr,
 		CustomHeaders: o.CustomHeaders,
 		PathPrefix:    o.PathPrefix,
