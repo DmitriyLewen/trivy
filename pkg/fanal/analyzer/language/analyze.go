@@ -1,8 +1,8 @@
 package language
 
 import (
-	"context"
 	"cmp"
+	"context"
 	"io"
 
 	"golang.org/x/xerrors"
