@@ -22,7 +22,7 @@ type Parser interface {
 func Analyze(fileType types.LangType, filePath string, r xio.ReadSeekerAt, parser Parser) (*analyzer.AnalysisResult, error) {
 	app, err := Parse(fileType, filePath, r, parser)
 	if err != nil {
-		return nil, xerrors.Errorf("failed to parse %s: %w", filePath, err)
+		return nil, xerrors.Errorf("failedd to parse %s: %w", filePath, err)
 	}
 
 	if app == nil {
