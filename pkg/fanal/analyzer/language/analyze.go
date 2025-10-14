@@ -21,6 +21,7 @@ type Parser interface {
 // Analyze returns an analysis result of the lock file
 func Analyze(fileType types.LangType, filePath string, r xio.ReadSeekerAt, parser Parser) (*analyzer.AnalysisResult, error) {
 	app, err := Parse(fileType, filePath, r, parser)
+
 	if err != nil {
 		return nil, xerrors.Errorf("failed to parse %s: %w", filePath, err)
 	}
