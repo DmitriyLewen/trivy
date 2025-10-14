@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
 	"golang.org/x/xerrors"
 
 	"github.com/aquasecurity/trivy/pkg/cache"
@@ -36,7 +37,7 @@ type Walker interface {
 	Walk(*io.SectionReader, string, walker.Option, walker.WalkFunc) error
 }
 
-func NewArtifact(target string, c cache.ArtifactCache, w Walker, opt artifact.Option) (artifact.Artifact, error) {
+func NewArtifact(target string, c cache.ArtifactCache, r resolver.Resolver, w Walker, opt artifact.Option) (artifact.Artifact, error) {
 	handlerManager, err := handler.NewManager(opt)
 	if err != nil {
 		return nil, xerrors.Errorf("handler init error: %w", err)
@@ -51,6 +52,7 @@ func NewArtifact(target string, c cache.ArtifactCache, w Walker, opt artifact.Op
 		analyzer:       a,
 		handlerManager: handlerManager,
 		walker:         w,
+		resolver:       r,
 		artifactOption: opt,
 	}
 
@@ -78,6 +80,7 @@ type Storage struct {
 	analyzer       analyzer.AnalyzerGroup
 	handlerManager handler.Manager
 	walker         Walker
+	resolver       resolver.Resolver
 
 	artifactOption artifact.Option
 }
@@ -136,6 +139,12 @@ func (a *Storage) Analyze(ctx context.Context, r *io.SectionReader) (types.BlobI
 	if err = a.analyzer.PostAnalyze(ctx, composite, result, opts); err != nil {
 		return types.BlobInfo{}, xerrors.Errorf("post analysis error: %w", err)
 	}
+
+	resolvedApps, err := a.resolver.Resolve(ctx, result.Applications)
+	if err != nil {
+		return types.BlobInfo{}, xerrors.Errorf("failed to resolve apps: %w", err)
+	}
+	result.Applications = resolvedApps
 
 	result.Sort()
 

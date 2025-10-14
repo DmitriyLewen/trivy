@@ -13,6 +13,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/samber/lo"
@@ -46,6 +47,7 @@ type Artifact struct {
 	walker         Walker
 	analyzer       analyzer.AnalyzerGroup
 	handlerManager handler.Manager
+	resolver       resolver.Resolver
 
 	artifactOption artifact.Option
 
@@ -53,7 +55,7 @@ type Artifact struct {
 	repoMetadata artifact.RepoMetadata // git repository metadata
 }
 
-func NewArtifact(rootPath string, c cache.ArtifactCache, w Walker, opt artifact.Option) (artifact.Artifact, error) {
+func NewArtifact(rootPath string, c cache.ArtifactCache, r resolver.Resolver, w Walker, opt artifact.Option) (artifact.Artifact, error) {
 	handlerManager, err := handler.NewManager(opt)
 	if err != nil {
 		return nil, xerrors.Errorf("handler initialize error: %w", err)
@@ -73,6 +75,7 @@ func NewArtifact(rootPath string, c cache.ArtifactCache, w Walker, opt artifact.
 		cache:          c,
 		walker:         w,
 		analyzer:       a,
+		resolver:       r,
 		handlerManager: handlerManager,
 		artifactOption: opt,
 	}
@@ -230,6 +233,12 @@ func (a Artifact) Inspect(ctx context.Context) (artifact.Reference, error) {
 	if err = a.analyzer.PostAnalyze(ctx, composite, result, opts); err != nil {
 		return artifact.Reference{}, xerrors.Errorf("post analysis error: %w", err)
 	}
+
+	resolvedApps, err := a.resolver.Resolve(ctx, result.Applications)
+	if err != nil {
+		return artifact.Reference{}, xerrors.Errorf("failed to resolve apps: %w", err)
+	}
+	result.Applications = resolvedApps
 
 	// Sort the analysis result for consistent results
 	result.Sort()

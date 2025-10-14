@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
 	"github.com/opencontainers/go-digest"
 	"github.com/samber/lo"
 	"golang.org/x/xerrors"
@@ -27,14 +28,16 @@ type Artifact struct {
 	cache          cache.ArtifactCache
 	analyzer       analyzer.AnalyzerGroup
 	handlerManager handler.Manager
+	resolver       resolver.Resolver
 
 	artifactOption artifact.Option
 }
 
-func NewArtifact(filePath string, c cache.ArtifactCache, opt artifact.Option) (artifact.Artifact, error) {
+func NewArtifact(filePath string, c cache.ArtifactCache, r resolver.Resolver, opt artifact.Option) (artifact.Artifact, error) {
 	return Artifact{
 		filePath:       filepath.Clean(filePath),
 		cache:          c,
+		resolver:       r,
 		artifactOption: opt,
 	}, nil
 }
@@ -58,6 +61,13 @@ func (a Artifact) Inspect(ctx context.Context) (artifact.Reference, error) {
 	if err != nil {
 		return artifact.Reference{}, xerrors.Errorf("SBOM decode error: %w", err)
 	}
+
+	// TODO think about this!!!
+	resolvedApps, err := a.resolver.Resolve(ctx, bom.Applications)
+	if err != nil {
+		return artifact.Reference{}, xerrors.Errorf("failed to resolve apps: %w", err)
+	}
+	bom.Applications = resolvedApps
 
 	blobInfo := types.BlobInfo{
 		SchemaVersion: types.BlobJSONSchemaVersion,

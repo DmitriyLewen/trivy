@@ -19,6 +19,7 @@ import (
 
 	"github.com/aquasecurity/trivy/pkg/cache"
 	"github.com/aquasecurity/trivy/pkg/fanal/analyzer"
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
 	"github.com/aquasecurity/trivy/pkg/fanal/artifact"
 	"github.com/aquasecurity/trivy/pkg/fanal/handler"
 	"github.com/aquasecurity/trivy/pkg/fanal/image"
@@ -42,13 +43,14 @@ type Artifact struct {
 	analyzer       analyzer.AnalyzerGroup       // analyzer for files in container image
 	configAnalyzer analyzer.ConfigAnalyzerGroup // analyzer for container image config
 	handlerManager handler.Manager
+	resolver       resolver.Resolver
 
 	artifactOption artifact.Option
 
 	layerCacheDir string
 }
 
-func NewArtifact(img types.Image, c cache.ArtifactCache, opt artifact.Option) (artifact.Artifact, error) {
+func NewArtifact(img types.Image, c cache.ArtifactCache, r resolver.Resolver, opt artifact.Option) (artifact.Artifact, error) {
 	// Initialize handlers
 	handlerManager, err := handler.NewManager(opt)
 	if err != nil {
@@ -78,6 +80,7 @@ func NewArtifact(img types.Image, c cache.ArtifactCache, opt artifact.Option) (a
 		analyzer:       a,
 		configAnalyzer: ca,
 		handlerManager: handlerManager,
+		resolver:       r,
 
 		artifactOption: opt,
 		layerCacheDir:  cacheDir,
@@ -417,6 +420,12 @@ func (a Artifact) inspectLayer(ctx context.Context, layer types.Layer, disabled 
 	if err = a.analyzer.PostAnalyze(ctx, composite, result, opts); err != nil {
 		return types.BlobInfo{}, xerrors.Errorf("post analysis error: %w", err)
 	}
+
+	resolvedApps, err := a.resolver.Resolve(ctx, result.Applications)
+	if err != nil {
+		return types.BlobInfo{}, xerrors.Errorf("failed to resolve apps: %w", err)
+	}
+	result.Applications = resolvedApps
 
 	// Read the remaining bytes for blocking factor to calculate the correct layer size
 	// cf. https://www.reddit.com/r/devops/comments/1gwpvrm/a_deep_dive_into_the_tar_format/
