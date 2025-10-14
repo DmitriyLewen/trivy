@@ -2,12 +2,15 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
+	"github.com/aquasecurity/trivy/pkg/rpc"
 	"github.com/aquasecurity/trivy/pkg/rpc/client"
+	xhttp "github.com/aquasecurity/trivy/pkg/x/http"
+	rpcResolver "github.com/aquasecurity/trivy/rpc/resolver"
 	"github.com/twitchtv/twirp"
+	"golang.org/x/xerrors"
 )
 
 type RemoteOptions struct {
@@ -18,7 +21,7 @@ type RemoteOptions struct {
 
 // RemoteResolver implements remote resolver
 type RemoteResolver struct {
-	client Resolver
+	client rpcResolver.Resolver
 }
 
 // NewRemoteResolver is the factory method for RemoteResolver
@@ -29,11 +32,27 @@ func NewRemoteResolver(ctx context.Context, opts RemoteOptions) RemoteResolver {
 	if opts.PathPrefix != "" {
 		twirpOpts = append(twirpOpts, twirp.WithClientPathPrefix(opts.PathPrefix))
 	}
+
+	c := rpcResolver.NewResolverProtobufClient(opts.ServerAddr, xhttp.ClientWithContext(ctx), twirpOpts...)
+
 	//c := rpcCache.NewCacheProtobufClient(opts.ServerAddr, xhttp.ClientWithContext(ctx), twirpOpts...)
-	return RemoteResolver{}
+	return RemoteResolver{
+		client: c,
+	}
 }
 
 func (r RemoteResolver) Resolve(ctx context.Context, apps ftypes.Applications) (ftypes.Applications, error) {
-	fmt.Println("RemoteResolver.Resolve called")
-	return apps, nil
+	var res *rpcResolver.ResolveResponse
+	err := rpc.Retry(func() error {
+		var err error
+		res, err = r.client.Resolve(ctx, rpc.ConvertToRPCResolveRequest(apps))
+		if err != nil {
+			return xerrors.Errorf("failed to resolve remote apps: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, xerrors.Errorf("unable to store cache on the server: %w", err)
+	}
+	return rpc.ConvertFromRPCResolveResponse(res), nil
 }

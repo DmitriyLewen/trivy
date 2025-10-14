@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package trivy.scanner.v1;
+
+import "rpc/common/service.proto";
+
+option go_package = "github.com/aquasecurity/trivy/rpc/resolver;resolver";
+
+service Resolver {
+  rpc Resolve(ResolveRequest) returns (ResolveResponse);
+}
+
+message ResolveRequest {
+  repeated common.Application apps = 1;
+}
+
+message ResolveResponse {
+  repeated common.Application apps = 1;
+}

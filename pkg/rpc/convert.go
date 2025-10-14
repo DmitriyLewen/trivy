@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aquasecurity/trivy/rpc/resolver"
 	"github.com/package-url/packageurl-go"
 	"github.com/samber/lo"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -1101,5 +1102,25 @@ func ConvertToRPCSecret(secret *ftypes.Secret) *common.Secret {
 	return &common.Secret{
 		Filepath: secret.FilePath,
 		Findings: ConvertToRPCSecretFindings(secret.Findings),
+	}
+}
+
+// ConvertFromRPCResolveResponse converts resolver.ResolveResponse to fanal.Application
+func ConvertFromRPCResolveResponse(req *resolver.ResolveResponse) ftypes.Applications {
+	return ConvertFromRPCApplications(req.Apps)
+}
+
+// ConvertToRPCResolveRequest converts fanal.Application to resolver.ResolveRequest
+func ConvertToRPCResolveRequest(apps ftypes.Applications) *resolver.ResolveRequest {
+	var rpcApps []*common.Application
+	for _, app := range apps {
+		rpcApps = append(rpcApps, &common.Application{
+			Type:     string(app.Type),
+			FilePath: app.FilePath,
+			Packages: ConvertToRPCPkgs(app.Packages),
+		})
+	}
+	return &resolver.ResolveRequest{
+		Apps: rpcApps,
 	}
 }
