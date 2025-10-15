@@ -621,10 +621,11 @@ func (r *runner) initScannerConfig(ctx context.Context, opts flag.Options) (Scan
 		[]ftypes.HandlerType{ftypes.SystemFileFilteringPostHandler}, nil)
 
 	return ScannerConfig{
-		Target:             target,
-		CacheOptions:       opts.CacheOpts(),
-		RemoteCacheOptions: opts.RemoteCacheOpts(),
-		ServerOption:       opts.ClientScannerOpts(),
+		Target:                target,
+		CacheOptions:          opts.CacheOpts(),
+		RemoteCacheOptions:    opts.RemoteCacheOpts(),
+		ServerOption:          opts.ClientScannerOpts(),
+		RemoveResolverOptions: opts.RemoteResolverOpts(),
 		ArtifactOption: artifact.Option{
 			DisabledAnalyzers: disabledAnalyzers(opts),
 			DisabledHandlers:  disabledHandlers,

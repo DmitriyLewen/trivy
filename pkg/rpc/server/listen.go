@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/NYTimes/gziphandler"
+	rpcResolver "github.com/aquasecurity/trivy/rpc/resolver"
 	"github.com/google/go-containerregistry/pkg/name"
 	"github.com/twitchtv/twirp"
 	"golang.org/x/xerrors"
@@ -136,6 +137,10 @@ func (s Server) NewServeMux(ctx context.Context, serverCache cache.Cache, dbUpda
 	cacheServer := rpcCache.NewCacheServer(NewCacheServer(serverCache), twirpOpts...)
 	layerHandler := withToken(withWaitGroup(cacheServer), s.token, s.tokenHeader)
 	mux.Handle(cacheServer.PathPrefix(), gziphandler.GzipHandler(layerHandler))
+
+	resolverServer := rpcResolver.NewResolverServer(NewResolverServer(), twirpOpts...)
+	resolverHandler := withToken(withWaitGroup(resolverServer), s.token, s.tokenHeader)
+	mux.Handle(resolverServer.PathPrefix(), gziphandler.GzipHandler(resolverHandler))
 
 	mux.HandleFunc("/healthz", func(rw http.ResponseWriter, _ *http.Request) {
 		if _, err := rw.Write([]byte("ok")); err != nil {

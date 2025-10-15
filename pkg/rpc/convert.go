@@ -787,6 +787,20 @@ func ConvertFromRPCApplications(rpcApps []*common.Application) []ftypes.Applicat
 	return apps
 }
 
+// ConvertToRPCApplications converts []ftypes.Application to []*common.Application
+func ConvertToRPCApplications(apps []ftypes.Application) []*common.Application {
+	var rpcApps []*common.Application
+	for _, app := range apps {
+		rpcApp := &common.Application{
+			Type:     string(app.Type), // или другой метод конвертации
+			FilePath: app.FilePath,
+			Packages: ConvertToRPCPkgs(app.Packages), // предполагаем, что такая функция есть
+		}
+		rpcApps = append(rpcApps, rpcApp)
+	}
+	return rpcApps
+}
+
 // ConvertFromRPCMisconfigurations converts common.Misconfiguration to fanal.Misconfiguration
 func ConvertFromRPCMisconfigurations(rpcMisconfs []*common.Misconfiguration) []ftypes.Misconfiguration {
 	var misconfs []ftypes.Misconfiguration

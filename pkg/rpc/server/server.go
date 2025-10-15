@@ -2,7 +2,10 @@ package server
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
+	rpcResolver "github.com/aquasecurity/trivy/rpc/resolver"
 	"github.com/samber/lo"
 	"golang.org/x/xerrors"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -165,4 +168,34 @@ func (s *CacheServer) DeleteBlobs(ctx context.Context, in *rpcCache.DeleteBlobsR
 		return nil, teeError(xerrors.Errorf("failed to remove a blobs: %w", err))
 	}
 	return &emptypb.Empty{}, nil
+}
+
+// ResolverServer implements the resolver
+type ResolverServer struct {
+	local resolver.Resolver
+}
+
+// NewResolverServer is the factory method for ResolverServer
+func NewResolverServer() *ResolverServer {
+	return &ResolverServer{
+		local: resolver.NewResolver(),
+	}
+}
+
+// Resolve resulves applications and returns them
+func (r *ResolverServer) Resolve(ctx context.Context, in *rpcResolver.ResolveRequest) (*rpcResolver.ResolveResponse, error) {
+	fmt.Println("ResolverServer.Resolve called")
+	if len(in.Apps) == 0 {
+		return &rpcResolver.ResolveResponse{
+			Apps: in.Apps,
+		}, nil
+	}
+	apps := rpc.ConvertFromRPCApplications(in.Apps)
+	resolvedApps, err := r.local.Resolve(ctx, apps)
+	if err != nil {
+		return nil, teeError(xerrors.Errorf("failed to resolve applications: %w", err))
+	}
+	return &rpcResolver.ResolveResponse{
+		Apps: rpc.ConvertToRPCApplications(resolvedApps),
+	}, nil
 }
