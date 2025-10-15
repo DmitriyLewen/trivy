@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
@@ -35,13 +36,13 @@ func NewRemoteResolver(ctx context.Context, opts RemoteOptions) RemoteResolver {
 
 	c := rpcResolver.NewResolverProtobufClient(opts.ServerAddr, xhttp.ClientWithContext(ctx), twirpOpts...)
 
-	//c := rpcCache.NewCacheProtobufClient(opts.ServerAddr, xhttp.ClientWithContext(ctx), twirpOpts...)
 	return RemoteResolver{
 		client: c,
 	}
 }
 
 func (r RemoteResolver) Resolve(ctx context.Context, apps ftypes.Applications) (ftypes.Applications, error) {
+	fmt.Println("RemoteResolver.Resolve called")
 	var res *rpcResolver.ResolveResponse
 	err := rpc.Retry(func() error {
 		var err error

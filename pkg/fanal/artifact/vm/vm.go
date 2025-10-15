@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"golang.org/x/sync/errgroup"
 	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
+	"golang.org/x/sync/errgroup"
 	"golang.org/x/xerrors"
 
 	"github.com/aquasecurity/trivy/pkg/cache"
@@ -129,13 +129,6 @@ func (a *Storage) Analyze(ctx context.Context, r *io.SectionReader) (types.BlobI
 
 		return nil
 	})
-
-	// Wait for all the goroutine to finish.
-	wg.Wait()
-
-	if err != nil {
-		return types.BlobInfo{}, xerrors.Errorf("walk vm error: %w", err)
-	}
 
 	// Wait for all the goroutine to finish.
 	if err = eg.Wait(); err != nil {

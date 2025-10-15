@@ -159,7 +159,7 @@ func (a Artifact) inspectRekorSBOMAttestation(ctx context.Context) (artifact.Ref
 }
 
 func (a Artifact) inspectSBOMFile(ctx context.Context, filePath string) (artifact.Reference, error) {
-	ar, err := sbom.NewArtifact(filePath, a.cache, a.artifactOption)
+	ar, err := sbom.NewArtifact(filePath, a.cache, a.resolver, a.artifactOption)
 	if err != nil {
 		return artifact.Reference{}, xerrors.Errorf("failed to new artifact: %w", err)
 	}
