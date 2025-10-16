@@ -129,6 +129,9 @@ func (a *Storage) Analyze(ctx context.Context, r *io.SectionReader) (types.BlobI
 
 		return nil
 	})
+	if err != nil {
+		return types.BlobInfo{}, xerrors.Errorf("walk vm error: %w", err)
+	}
 
 	// Wait for all the goroutine to finish.
 	if err = eg.Wait(); err != nil {
