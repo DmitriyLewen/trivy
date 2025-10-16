@@ -20,5 +20,19 @@ func NewResolver(resolvers ...Resolver) Resolver {
 
 func (ar ApplicationsResolver) Resolve(_ context.Context, apps ftypes.Applications) (ftypes.Applications, error) {
 	fmt.Println("ApplicationsResolver.Resolve called")
-	return apps, nil
+	var resolverApps ftypes.Applications
+	for _, app := range apps {
+		resolverApp := ftypes.Application{
+			Type:     app.Type,
+			FilePath: app.FilePath,
+		}
+		for _, pkg := range app.Packages {
+			if pkg.Name == "lodash" {
+				pkg.Version = "4.17.20"
+			}
+			resolverApp.Packages = append(resolverApp.Packages, pkg)
+		}
+		resolverApps = append(resolverApps, resolverApp)
+	}
+	return resolverApps, nil
 }
