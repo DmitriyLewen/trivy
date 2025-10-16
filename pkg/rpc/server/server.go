@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aquasecurity/trivy/pkg/fanal/analyzer/resolver"
 	rpcResolver "github.com/aquasecurity/trivy/rpc/resolver"
 	"github.com/samber/lo"
 	"golang.org/x/xerrors"
@@ -14,6 +13,7 @@ import (
 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
 	"github.com/aquasecurity/trivy/pkg/cache"
 	"github.com/aquasecurity/trivy/pkg/fanal/applier"
+	"github.com/aquasecurity/trivy/pkg/fanal/resolver"
 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
 	"github.com/aquasecurity/trivy/pkg/log"
 	"github.com/aquasecurity/trivy/pkg/rpc"
