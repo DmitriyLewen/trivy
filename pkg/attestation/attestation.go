@@ -40,6 +40,5 @@ func (s *Statement) UnmarshalJSON(b []byte) error {
 	if err = json.NewDecoder(bytes.NewReader(decoded)).Decode(statement); err != nil {
 		return xerrors.Errorf("failed to decode attestation payload as in-toto statement: %w", err)
 	}
-
 	return nil
 }
