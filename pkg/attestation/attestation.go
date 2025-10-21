@@ -26,7 +26,7 @@ func (s *Statement) UnmarshalJSON(b []byte) error {
 
 	err := json.NewDecoder(bytes.NewReader(b)).Decode(&envelope)
 	if err != nil {
-		return xerrors.Errorf("failed to decode as a dsse envelope: %w", err)
+		return xerrors.Errorf("failed to decode as a dsse envelope : %w", err)
 	}
 	if envelope.PayloadType != in_toto.PayloadType {
 		return xerrors.Errorf("invalid attestation payload type: %s", envelope.PayloadType)
