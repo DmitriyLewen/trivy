@@ -34,7 +34,7 @@ func (s *Statement) UnmarshalJSON(b []byte) error {
 
 	decoded, err := base64.StdEncoding.DecodeString(envelope.Payload)
 	if err != nil {
-		return xerrors.Errorf("failed to decode attestation payload: %w", err)
+		return xerrors.Errorf("failed to decode attestation payloadss: %w", err)
 	}
 
 	statement := (*in_toto.Statement)(s)
