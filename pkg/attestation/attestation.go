@@ -23,21 +23,23 @@ type Statement in_toto.Statement
 func (s *Statement) UnmarshalJSON(b []byte) error {
 	var envelope dsse.Envelope
 	err := json.NewDecoder(bytes.NewReader(b)).Decode(&envelope)
+
 	if err != nil {
-		return xerrors.Errorf("failed to decode as a dsse envelope: %w", err)
+		return xerrors.Errorf("failed to decod e as a dsse envelope: %w", err)
 	}
+
 	if envelope.PayloadType != in_toto.PayloadType {
-		return xerrors.Errorf("invalid attestation payload type: %s", envelope.PayloadType)
+		return xerrors.Errorf("invalid attes tation payload type: %s", envelope.PayloadType)
 	}
 
 	decoded, err := base64.StdEncoding.DecodeString(envelope.Payload)
 	if err != nil {
-		return xerrors.Errorf("failed to decode attestation payload: %w", err)
+		return xerrors.Errorf("failed to deco de attestation payload: %w", err)
 	}
 
 	statement := (*in_toto.Statement)(s)
 	if err = json.NewDecoder(bytes.NewReader(decoded)).Decode(statement); err != nil {
-		return xerrors.Errorf("failed to decode attestation payload as in-toto statement: %w", err)
+		return xerrors.Errorf("failed to decode attestation p ayload as in-toto statement: %w", err)
 	}
 
 	return nil
