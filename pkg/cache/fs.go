@@ -13,6 +13,7 @@ import (
 	bberrors "go.etcd.io/bbolt/errors"
 	"golang.org/x/xerrors"
 
+	"github.com/aquasecurity/trivy/pkg/fanal/resolver"
 	"github.com/aquasecurity/trivy/pkg/fanal/types"
 )
 
@@ -21,8 +22,9 @@ const defaultFSCacheTimeout = 5 * time.Second
 var _ Cache = &FSCache{}
 
 type FSCache struct {
-	db        *bolt.DB
-	directory string
+	db                  *bolt.DB
+	directory           string
+	applicationResolver resolver.Resolver
 }
 
 func NewFSCache(cacheDir string) (FSCache, error) {
@@ -58,8 +60,9 @@ func NewFSCache(cacheDir string) (FSCache, error) {
 	}
 
 	return FSCache{
-		db:        db,
-		directory: dir,
+		db:                  db,
+		directory:           dir,
+		applicationResolver: resolver.NewResolver(),
 	}, nil
 }
 
@@ -92,7 +95,12 @@ func (fs FSCache) getBlob(blobBucket *bolt.Bucket, diffID string) (types.BlobInf
 }
 
 // PutBlob stores blob information such as layer information in local cache
-func (fs FSCache) PutBlob(_ context.Context, blobID string, blobInfo types.BlobInfo) error {
+func (fs FSCache) PutBlob(ctx context.Context, blobID string, blobInfo types.BlobInfo) error {
+	var err error
+	blobInfo.Applications, err = fs.applicationResolver.Resolve(ctx, blobInfo.Applications)
+	if err != nil {
+		return xerrors.Errorf("failed to resolve blob applications: %w", err)
+	}
 	b, err := json.Marshal(blobInfo)
 	if err != nil {
 		return xerrors.Errorf("unable to marshal blob JSON (%s): %w", blobID, err)

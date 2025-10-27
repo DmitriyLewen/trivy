@@ -6,6 +6,7 @@ import (
 
 	"golang.org/x/xerrors"
 
+	"github.com/aquasecurity/trivy/pkg/fanal/resolver"
 	"github.com/aquasecurity/trivy/pkg/fanal/types"
 )
 
@@ -14,10 +15,14 @@ var _ Cache = &MemoryCache{}
 type MemoryCache struct {
 	artifacts sync.Map // Map to store artifact information
 	blobs     sync.Map // Map to store blob information
+
+	ApplicationResolver resolver.Resolver
 }
 
 func NewMemoryCache() *MemoryCache {
-	return &MemoryCache{}
+	return &MemoryCache{
+		ApplicationResolver: resolver.NewResolver(),
+	}
 }
 
 // PutArtifact stores the artifact information in the memory cache
@@ -27,7 +32,12 @@ func (c *MemoryCache) PutArtifact(_ context.Context, artifactID string, artifact
 }
 
 // PutBlob stores the blob information in the memory cache
-func (c *MemoryCache) PutBlob(_ context.Context, blobID string, blobInfo types.BlobInfo) error {
+func (c *MemoryCache) PutBlob(ctx context.Context, blobID string, blobInfo types.BlobInfo) error {
+	var err error
+	blobInfo.Applications, err = c.ApplicationResolver.Resolve(ctx, blobInfo.Applications)
+	if err != nil {
+		return xerrors.Errorf("failed to resolve blob applications: %w", err)
+	}
 	c.blobs.Store(blobID, blobInfo)
 	return nil
 }
