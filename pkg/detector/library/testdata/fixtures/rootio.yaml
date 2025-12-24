@@ -1,0 +1,10 @@
+- bucket: "rootio-pip::Root.io Security Patches"
+  pairs:
+    - bucket: requests
+      pairs:
+        - key: CVE-2024-99999
+          value:
+            PatchedVersions:
+              - 2.28.1+root.io.2
+            VulnerableVersions:
+              - =2.28.1+root.io.1

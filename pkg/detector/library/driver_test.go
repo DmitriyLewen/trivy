@@ -264,6 +264,31 @@ func TestDriver_Detect(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "rootio package",
+			fixtures: []string{
+				"testdata/fixtures/rootio.yaml",
+				"testdata/fixtures/data-source.yaml",
+			},
+			libType: ftypes.PythonPkg,
+			args: args{
+				pkgName: "requests",
+				pkgVer:  "2.28.1+root.io.1",
+			},
+			want: []types.DetectedVulnerability{
+				{
+					VulnerabilityID:  "CVE-2024-99999",
+					PkgName:          "requests",
+					InstalledVersion: "2.28.1+root.io.1",
+					FixedVersion:     "2.28.1+root.io.2",
+					DataSource: &dbTypes.DataSource{
+						ID:   vulnerability.RootIO,
+						Name: "Root.io Security Patches (debian)",
+						URL:  "https://api.root.io/external/patch_feed",
+					},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -40,3 +40,8 @@
         ID: "seal"
         Name: "Seal Security Database"
         URL: "http://vulnfeed.sealsecurity.io/v1/osv/renamed/vulnerabilities.zip"
+    - key: "rootio-pip::Root.io Security Patches"
+      value:
+        ID: "rootio"
+        Name: "Root.io Security Patches (debian)"
+        URL: "https://api.root.io/external/patch_feed"

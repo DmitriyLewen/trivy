@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aquasecurity/trivy-db/pkg/ecosystem"
+	"github.com/aquasecurity/trivy/pkg/detector/library/vendors/rootio"
 	"github.com/aquasecurity/trivy/pkg/detector/library/vendors/seal"
 )
 
@@ -31,6 +32,7 @@ type Vendor interface {
 // See also: pkg/detector/ospkg/seal/ for the OS package equivalent.
 var vendors = []Vendor{
 	seal.SealSecurity{},
+	rootio.RootIO{},
 }
 
 // resolveAdvisoryPrefix determines the advisory bucket prefix based on package info.
