@@ -14,6 +14,7 @@ import (
 	dtypes "github.com/aquasecurity/trivy-db/pkg/types"
 	"github.com/aquasecurity/trivy-db/pkg/vulnsrc/vulnerability"
 	"github.com/aquasecurity/trivy/pkg/clock"
+	"github.com/aquasecurity/trivy/pkg/fanal/analyzer"
 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
 	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/aquasecurity/trivy/pkg/sbom/core"
@@ -2030,6 +2031,47 @@ func TestMarshaler_MarshalReport(t *testing.T) {
 							},
 						},
 					},
+					{
+						// Python packages got from multiple CycloneDX files,
+						// but with same packages and BomRefs
+						Target: "Python",
+						Type:   ftypes.PythonPkg,
+						Class:  types.ClassLangPkg,
+						Packages: []ftypes.Package{
+							// foo/distlib.cdx.json
+							{
+								ID:      "distlib@0.3.1",
+								Name:    "distlib",
+								Version: "0.3.1",
+								Identifier: ftypes.PkgIdentifier{
+									UID: "9206a1be9b1bf5b0",
+									PURL: &packageurl.PackageURL{
+										Type:    packageurl.TypePyPi,
+										Name:    "distlib",
+										Version: "0.3.1",
+									},
+									BOMRef: "3ff14136-e09f-4df9-80ea-000000000003",
+								},
+								AnalyzedBy: analyzer.TypeSBOM,
+							},
+							// bar/distlib.cdx.json
+							{
+								ID:      "distlib@0.3.1",
+								Name:    "distlib",
+								Version: "0.3.1",
+								Identifier: ftypes.PkgIdentifier{
+									UID: "195c8b7342ae13d5",
+									PURL: &packageurl.PackageURL{
+										Type:    packageurl.TypePyPi,
+										Name:    "distlib",
+										Version: "0.3.1",
+									},
+									BOMRef: "3ff14136-e09f-4df9-80ea-000000000003",
+								},
+								AnalyzedBy: analyzer.TypeSBOM,
+							},
+						},
+					},
 				},
 			},
 			want: &cdx.BOM{
@@ -2037,7 +2079,7 @@ func TestMarshaler_MarshalReport(t *testing.T) {
 				BOMFormat:    "CycloneDX",
 				SpecVersion:  cdx.SpecVersion1_6,
 				JSONSchema:   "http://cyclonedx.org/schema/bom-1.6.schema.json",
-				SerialNumber: "urn:uuid:3ff14136-e09f-4df9-80ea-000000000003",
+				SerialNumber: "urn:uuid:3ff14136-e09f-4df9-80ea-000000000005",
 				Version:      1,
 				Metadata: &cdx.Metadata{
 					Timestamp: "2021-08-25T12:20:30+00:00",
@@ -2067,6 +2109,40 @@ func TestMarshaler_MarshalReport(t *testing.T) {
 					},
 				},
 				Components: &[]cdx.Component{
+					{
+						BOMRef:     "3ff14136-e09f-4df9-80ea-000000000003",
+						Type:       "library",
+						Name:       "distlib",
+						Version:    "0.3.1",
+						PackageURL: "pkg:pypi/distlib@0.3.1",
+						Properties: &[]cdx.Property{
+							{
+								Name:  "aquasecurity:trivy:PkgID",
+								Value: "distlib@0.3.1",
+							},
+							{
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "python-pkg",
+							},
+						},
+					},
+					{
+						BOMRef:     "3ff14136-e09f-4df9-80ea-000000000004",
+						Type:       "library",
+						Name:       "distlib",
+						Version:    "0.3.1",
+						PackageURL: "pkg:pypi/distlib@0.3.1",
+						Properties: &[]cdx.Property{
+							{
+								Name:  "aquasecurity:trivy:PkgID",
+								Value: "distlib@0.3.1",
+							},
+							{
+								Name:  "aquasecurity:trivy:PkgType",
+								Value: "python-pkg",
+							},
+						},
+					},
 					{
 						BOMRef:     "pkg:npm/ruby-typeprof@0.20.1",
 						Type:       "library",
@@ -2105,8 +2181,18 @@ func TestMarshaler_MarshalReport(t *testing.T) {
 					{
 						Ref: "3ff14136-e09f-4df9-80ea-000000000001",
 						Dependencies: &[]string{
+							"3ff14136-e09f-4df9-80ea-000000000003",
+							"3ff14136-e09f-4df9-80ea-000000000004",
 							"pkg:npm/ruby-typeprof@0.20.1",
 						},
+					},
+					{
+						Ref:          "3ff14136-e09f-4df9-80ea-000000000003",
+						Dependencies: lo.ToPtr([]string{}),
+					},
+					{
+						Ref:          "3ff14136-e09f-4df9-80ea-000000000004",
+						Dependencies: lo.ToPtr([]string{}),
 					},
 					{
 						Ref:          "pkg:npm/ruby-typeprof@0.20.1",

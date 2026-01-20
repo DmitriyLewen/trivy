@@ -88,6 +88,10 @@ type BOM struct {
 	// This is used to ensure that each package URL is only represented once in the BOM.
 	purls map[string][]uuid.UUID
 
+	// bomRefs is a map of BOMRefs to UUIDs
+	// This is used to ensure that each BOMRef is only represented once in the BOM.
+	bomRefs map[string][]uuid.UUID
+
 	// parents is a map of parent components to their children
 	// This field is populated when Options.Parents is set to true.
 	parents map[uuid.UUID][]uuid.UUID
@@ -250,6 +254,7 @@ func NewBOM(opts Options) *BOM {
 		relationships:      make(map[uuid.UUID][]Relationship),
 		vulnerabilities:    make(map[uuid.UUID][]Vulnerability),
 		purls:              make(map[string][]uuid.UUID),
+		bomRefs:            make(map[string][]uuid.UUID),
 		parents:            make(map[uuid.UUID][]uuid.UUID),
 		externalReferences: make([]ExternalReference, 0),
 		opts:               opts,
@@ -263,6 +268,9 @@ func (b *BOM) setupComponent(c *Component) {
 	if c.PkgIdentifier.PURL != nil {
 		p := c.PkgIdentifier.PURL.String()
 		b.purls[p] = append(b.purls[p], c.id)
+	}
+	if c.PkgIdentifier.BOMRef != "" {
+		b.bomRefs[c.PkgIdentifier.BOMRef] = append(b.bomRefs[c.PkgIdentifier.BOMRef], c.id)
 	}
 	sort.Sort(c.Properties)
 }
@@ -361,8 +369,14 @@ func (b *BOM) Parents() map[uuid.UUID][]uuid.UUID {
 // bomRef returns BOMRef for CycloneDX
 // When multiple lock files have the same dependency with the same name and version, PURL in the BOM can conflict.
 // In that case, PURL cannot be used as a unique identifier, and UUIDv4 be used for BOMRef.
+// Similarly, when multiple SBOM files contain the same BOMRef, UUID is used to ensure uniqueness.
 func (b *BOM) bomRef(c *Component) string {
+	// Check if BOMRef is present and unique
 	if c.PkgIdentifier.BOMRef != "" {
+		// Return the UUID of the component if the BOMRef is not unique in the BOM.
+		if len(b.bomRefs[c.PkgIdentifier.BOMRef]) > 1 {
+			return c.id.String()
+		}
 		return c.PkgIdentifier.BOMRef
 	}
 	// Return the UUID of the component if the PURL is not present.
@@ -406,6 +420,11 @@ func (b *BOM) Clone() *BOM {
 
 		// Deep copy purls
 		purls: lo.MapValues(b.purls, func(ids []uuid.UUID, _ string) []uuid.UUID {
+			return slices.Clone(ids)
+		}),
+
+		// Deep copy bomRefs
+		bomRefs: lo.MapValues(b.bomRefs, func(ids []uuid.UUID, _ string) []uuid.UUID {
 			return slices.Clone(ids)
 		}),
 
