@@ -49,5 +49,5 @@ jobs:
         run: |
           gh workflow run deploy-packages.yml \
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-repo" \
-            --ref main \
+            --ref feat/deploy-packages-workflow \
             --field "version=$GITHUB_REF_NAME"
