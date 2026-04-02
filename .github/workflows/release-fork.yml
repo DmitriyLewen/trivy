@@ -1,0 +1,53 @@
+name: Release (fork test)
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Release (RPM/DEB only)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: ./.github/actions/setup-go
+
+      - name: Save GPG key to file
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+        run: echo "$GPG_KEY" > /tmp/gpg.key
+
+      - name: GoReleaser (RPM/DEB only)
+        uses: goreleaser/goreleaser-action@9ed2f89a662bf1735a48bc8557fd212fa902bebf # v6.3.0
+        with:
+          version: ~> v2
+          args: release -f goreleaser-fork.yml --clean --timeout 30m
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NFPM_DEFAULT_RPM_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_FILE: /tmp/gpg.key
+
+      - name: Remove GPG key file
+        if: always()
+        run: rm -f /tmp/gpg.key
+
+  deploy-packages:
+    name: Trigger deploy-packages
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deploy-packages workflow in trivy-repo
+        env:
+          GH_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
+        run: |
+          gh workflow run deploy-packages.yml \
+            --repo "$GITHUB_REPOSITORY_OWNER/trivy-repo" \
+            --ref main \
+            --field "version=$GITHUB_REF_NAME"
