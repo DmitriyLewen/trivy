@@ -23,14 +23,11 @@ jobs:
   deploy-packages:
     name: Deploy rpm/deb packages
     needs: release # run this job after 'release' job completes
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Trigger deploy-packages workflow in trivy-repo
         env:
-          # TODO: ORG_REPO_TOKEN will be renamed to a dedicated secret.
-          # Required fine-grained PAT permissions:
-          #   resource: aquasecurity/trivy-repo — Actions: Write
-          GH_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
+          GH_TOKEN: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_TOKEN }}
         run: |
           gh workflow run deploy-packages.yml \
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-repo" \
@@ -38,8 +35,6 @@ jobs:
             --field "version=$GITHUB_REF_NAME"
 
   # `update-chart-version` creates a new PR for updating the helm chart
-  # Note: runs in parallel with deploy-packages (trivy-repo workflow). Users could
-  # theoretically see a new helm chart version before .deb/.rpm packages are live.
   update-chart-version:
     needs: release
     runs-on: ubuntu-22.04
@@ -69,8 +64,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.ORG_REPO_TOKEN }}
 
   # `trigger-version-update` triggers workflows in the `aqua` repositories to update the Trivy version.
-  # Note: runs in parallel with deploy-packages (trivy-repo workflow). Users could
-  # theoretically see a new version before .deb/.rpm packages are live.
   trigger-version-update:
     needs: release
     runs-on: ubuntu-22.04
