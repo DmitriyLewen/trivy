@@ -51,3 +51,13 @@ jobs:
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-repo" \
             --ref feat/deploy-packages-workflow \
             --field "version=$GITHUB_REF_NAME"
+
+  # Mock: mirrors needs of update-chart-version in release.yaml (needs: release, not deploy-packages)
+  # This verifies that update-chart-version does NOT wait for deploy-packages to finish.
+  update-chart-version:
+    name: "[mock] Update chart version"
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log
+        run: echo "update-chart-version started (deploy-packages may still be running)"
