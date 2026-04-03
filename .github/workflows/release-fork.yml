@@ -49,7 +49,7 @@ jobs:
         run: |
           gh workflow run deploy-packages.yml \
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-repo" \
-            --ref feat/deploy-packages-workflow \
+            --ref main \
             --field "version=$GITHUB_REF_NAME"
 
   # Mock: mirrors needs of update-chart-version in release.yaml (needs: release, not deploy-packages)
