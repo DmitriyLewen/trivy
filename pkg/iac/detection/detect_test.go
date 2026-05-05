@@ -2,6 +2,7 @@ package detection
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -9,9 +10,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/xeipuuv/gojsonschema"
 )
 
 func Test_Detection(t *testing.T) {
@@ -53,6 +54,7 @@ func Test_Detection(t *testing.T) {
 			expected: []FileType{
 				FileTypeTerraform,
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -70,6 +72,7 @@ func Test_Detection(t *testing.T) {
 			expected: []FileType{
 				FileTypeTerraform,
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -108,6 +111,7 @@ func Test_Detection(t *testing.T) {
 			expected: []FileType{
 				FileTypeTerraform,
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -125,6 +129,7 @@ func Test_Detection(t *testing.T) {
 			expected: []FileType{
 				FileTypeTerraform,
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -133,6 +138,7 @@ func Test_Detection(t *testing.T) {
 			expected: []FileType{
 				FileTypeYAML,
 				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -154,6 +160,7 @@ func Test_Detection(t *testing.T) {
 			expected: []FileType{
 				FileTypeTerraformPlanJSON,
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -185,6 +192,7 @@ Resources:
 				FileTypeCloudFormation,
 				FileTypeYAML,
 				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -195,6 +203,7 @@ Resources:
 }`),
 			expected: []FileType{
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -203,6 +212,7 @@ Resources:
 			r:    nil,
 			expected: []FileType{
 				FileTypeDockerfile,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -211,6 +221,7 @@ Resources:
 			r:    nil,
 			expected: []FileType{
 				FileTypeDockerfile,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -219,6 +230,7 @@ Resources:
 			r:    strings.NewReader("FROM ubuntu\n"),
 			expected: []FileType{
 				FileTypeDockerfile,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -235,6 +247,8 @@ Resources:
 			r:    nil,
 			expected: []FileType{
 				FileTypeYAML,
+				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -264,6 +278,8 @@ spec:
 			expected: []FileType{
 				FileTypeKubernetes,
 				FileTypeYAML,
+				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -310,6 +326,7 @@ spec:
 			expected: []FileType{
 				FileTypeKubernetes,
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -319,6 +336,7 @@ spec:
 			expected: []FileType{
 				FileTypeYAML,
 				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -327,6 +345,8 @@ spec:
 			r:    nil,
 			expected: []FileType{
 				FileTypeYAML,
+				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -335,6 +355,7 @@ spec:
 			r:    nil,
 			expected: []FileType{
 				FileTypeYAML,
+				FileTypeHelm,
 			},
 		},
 		{
@@ -351,6 +372,7 @@ spec:
 			r:    nil,
 			expected: []FileType{
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -367,6 +389,8 @@ data:
 			expected: []FileType{
 				FileTypeKubernetes,
 				FileTypeYAML,
+				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -395,6 +419,26 @@ rules:
 			expected: []FileType{
 				FileTypeKubernetes,
 				FileTypeYAML,
+				FileTypeHelm,
+				FileTypeAnsible,
+			},
+		},
+		{
+			name: "kubernetes, multi-doc with non-map doc first",
+			path: "k8s.yaml",
+			r: strings.NewReader(`---
+- this is a list, not a map
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valid-service
+`),
+			expected: []FileType{
+				FileTypeKubernetes,
+				FileTypeYAML,
+				FileTypeHelm,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -424,6 +468,31 @@ rules:
 			expected: []FileType{
 				FileTypeJSON,
 				FileTypeAzureARM,
+				FileTypeAnsible,
+			},
+		},
+		{
+			name: "Azure ARM resources defined as an object",
+			path: "test.json",
+			r: strings.NewReader(`{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "languageVersion": "2.0",
+  "contentVersion": "1.0.0.0",
+  "resources": {
+    "myacc": {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2025-06-01",
+      "name": "my-acc-test",
+      "location": "location",
+			"kind": "Storage"
+    }
+  }
+}`),
+			expected: []FileType{
+				FileTypeJSON,
+				FileTypeCloudFormation,
+				FileTypeAzureARM,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -445,6 +514,7 @@ rules:
 			expected: []FileType{
 				FileTypeJSON,
 				FileTypeAzureARM,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -459,6 +529,7 @@ rules:
 `),
 			expected: []FileType{
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
 		},
 		{
@@ -481,7 +552,34 @@ rules:
 }`),
 			expected: []FileType{
 				FileTypeJSON,
+				FileTypeAnsible,
 			},
+		},
+		{
+			name: "without extension",
+			path: "something",
+			expected: []FileType{
+				FileTypeAnsible,
+			},
+		},
+		{
+			name: "Ansible inventory INI file",
+			path: "something.ini",
+			expected: []FileType{
+				FileTypeAnsible,
+			},
+		},
+		{
+			name: "Ansible config file",
+			path: "ansible.cfg",
+			expected: []FileType{
+				FileTypeAnsible,
+			},
+		},
+		{
+			name:     " not Ansible config file",
+			path:     "something.cfg",
+			expected: []FileType{},
 		},
 	}
 
@@ -656,12 +754,14 @@ number: 2`,
 		},
 	}
 	for _, tt := range tests {
-		schemas := make(map[string]*gojsonschema.Schema)
+		schemas := make(map[string]*jsonschema.Resolved)
 		for i, content := range tt.args.schemas {
-			l := gojsonschema.NewStringLoader(content)
-			s, err := gojsonschema.NewSchema(l)
+			var s jsonschema.Schema
+			err := json.Unmarshal([]byte(content), &s)
 			require.NoError(t, err)
-			schemas[fmt.Sprintf("schema-%d.json", i)] = s
+			resolved, err := s.Resolve(nil)
+			require.NoError(t, err)
+			schemas[fmt.Sprintf("schema-%d.json", i)] = resolved
 		}
 		rs := strings.NewReader(tt.args.fileContent)
 		got := IsFileMatchesSchemas(schemas, tt.args.fileType, tt.args.fileName, rs)

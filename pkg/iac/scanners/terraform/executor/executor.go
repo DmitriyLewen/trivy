@@ -85,7 +85,7 @@ func (e *Executor) Execute(ctx context.Context, modules terraform.Modules, baseP
 
 	for _, ignored := range results.GetIgnored() {
 		e.logger.Info("Ignore finding",
-			log.String("rule", ignored.Rule().LongID()),
+			log.String("rule", ignored.Rule().CanonicalID()),
 			log.String("range", ignored.Range().String()),
 		)
 	}
@@ -204,6 +204,9 @@ func ignoreByParams(params map[string]string, modules terraform.Modules, m *type
 	}
 	for key, param := range params {
 		val := block.GetValueByPath(key)
+		if val.IsNull() || !val.IsKnown() {
+			return false
+		}
 		switch val.Type() {
 		case cty.String:
 			if val.AsString() != param {

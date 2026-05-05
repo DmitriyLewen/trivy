@@ -41,6 +41,7 @@ func Test_Adapt(t *testing.T) {
 		   resource "azurerm_network_watcher_flow_log" "example" {
 			resource_group_name  = azurerm_resource_group.example.name
 			name                 = "example-log"
+			enabled              = true
 		  
 			retention_policy {
 			  enabled = true
@@ -51,44 +52,37 @@ func Test_Adapt(t *testing.T) {
 			expected: network.Network{
 				SecurityGroups: []network.SecurityGroup{
 					{
-						Metadata: iacTypes.NewTestMetadata(),
 						Rules: []network.SecurityGroupRule{
 							{
-								Metadata: iacTypes.NewTestMetadata(),
-								Outbound: iacTypes.Bool(false, iacTypes.NewTestMetadata()),
-								Allow:    iacTypes.Bool(true, iacTypes.NewTestMetadata()),
+								Allow: iacTypes.BoolTest(true),
 								SourceAddresses: []iacTypes.StringValue{
-									iacTypes.String("4.53.160.75", iacTypes.NewTestMetadata()),
+									iacTypes.StringTest("4.53.160.75"),
 								},
 								DestinationAddresses: []iacTypes.StringValue{
-									iacTypes.String("*", iacTypes.NewTestMetadata()),
+									iacTypes.StringTest("*"),
 								},
 								SourcePorts: []common.PortRange{
 									{
-										Metadata: iacTypes.NewTestMetadata(),
-										Start:    iacTypes.IntTest(0),
-										End:      iacTypes.IntTest(65535),
+										End: iacTypes.IntTest(65535),
 									},
 								},
 								DestinationPorts: []common.PortRange{
 									{
-										Metadata: iacTypes.NewTestMetadata(),
-										Start:    iacTypes.IntTest(3389),
-										End:      iacTypes.IntTest(3389),
+										Start: iacTypes.IntTest(3389),
+										End:   iacTypes.IntTest(3389),
 									},
 								},
-								Protocol: iacTypes.String("TCP", iacTypes.NewTestMetadata()),
+								Protocol: iacTypes.StringTest("TCP"),
 							},
 						},
 					},
 				},
 				NetworkWatcherFlowLogs: []network.NetworkWatcherFlowLog{
 					{
-						Metadata: iacTypes.NewTestMetadata(),
+						Enabled: iacTypes.BoolTest(true),
 						RetentionPolicy: network.RetentionPolicy{
-							Metadata: iacTypes.NewTestMetadata(),
-							Enabled:  iacTypes.Bool(true, iacTypes.NewTestMetadata()),
-							Days:     iacTypes.Int(7, iacTypes.NewTestMetadata()),
+							Enabled: iacTypes.BoolTest(true),
+							Days:    iacTypes.IntTest(7),
 						},
 					},
 				},
@@ -96,23 +90,60 @@ func Test_Adapt(t *testing.T) {
 		},
 		{
 			name: "defaults",
-			terraform: `
-		   resource "azurerm_network_security_group" "example" {
-			 name                = "tf-appsecuritygroup"
-			 security_rule {
-			 }
-		   }
+			terraform: `resource "azurerm_network_security_group" "example" {
+	name = "tf-appsecuritygroup"
+	security_rule {}
+}
 `,
 			expected: network.Network{
 				SecurityGroups: []network.SecurityGroup{
 					{
-						Metadata: iacTypes.NewTestMetadata(),
 						Rules: []network.SecurityGroupRule{
 							{
-								Metadata: iacTypes.NewTestMetadata(),
-								Outbound: iacTypes.Bool(false, iacTypes.NewTestMetadata()),
-								Allow:    iacTypes.Bool(true, iacTypes.NewTestMetadata()),
-								Protocol: iacTypes.String("", iacTypes.NewTestMetadata()),
+								Allow: iacTypes.BoolTest(true),
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "network interface",
+			terraform: `resource "azurerm_network_interface" "example" {
+	name                = "example-nic"
+	location            = "eastus"
+	resource_group_name = "example-rg"
+
+	ip_configuration {
+		name = "primary-ip"
+		primary = true
+		subnet_id = "subnet-primary-id"
+		public_ip_address_id = "public-ip-primary-id"
+	}
+
+	ip_configuration {
+		name = "secondary-ip"
+		subnet_id = "subnet-secondary-id"
+	}
+}
+`,
+			expected: network.Network{
+				NetworkInterfaces: []network.NetworkInterface{
+					{
+						// legacy fields filled from primary
+						SubnetID:        iacTypes.StringTest("subnet-primary-id"),
+						HasPublicIP:     iacTypes.BoolTest(true),
+						PublicIPAddress: iacTypes.StringTest("public-ip-primary-id"),
+
+						IPConfigurations: []network.IPConfiguration{
+							{
+								SubnetID:        iacTypes.StringTest("subnet-primary-id"),
+								Primary:         iacTypes.BoolTest(true),
+								HasPublicIP:     iacTypes.BoolTest(true),
+								PublicIPAddress: iacTypes.StringTest("public-ip-primary-id"),
+							},
+							{
+								SubnetID: iacTypes.StringTest("subnet-secondary-id"),
 							},
 						},
 					},
@@ -140,6 +171,7 @@ func Test_adaptWatcherLog(t *testing.T) {
 			name: "defined",
 			terraform: `
 			resource "azurerm_network_watcher_flow_log" "watcher" {		
+				enabled = true
 				retention_policy {
 					enabled = true
 					days = 90
@@ -147,11 +179,10 @@ func Test_adaptWatcherLog(t *testing.T) {
 			}
 `,
 			expected: network.NetworkWatcherFlowLog{
-				Metadata: iacTypes.NewTestMetadata(),
+				Enabled: iacTypes.BoolTest(true),
 				RetentionPolicy: network.RetentionPolicy{
-					Metadata: iacTypes.NewTestMetadata(),
-					Enabled:  iacTypes.Bool(true, iacTypes.NewTestMetadata()),
-					Days:     iacTypes.Int(90, iacTypes.NewTestMetadata()),
+					Enabled: iacTypes.BoolTest(true),
+					Days:    iacTypes.IntTest(90),
 				},
 			},
 		},
@@ -164,12 +195,7 @@ func Test_adaptWatcherLog(t *testing.T) {
 			}
 `,
 			expected: network.NetworkWatcherFlowLog{
-				Metadata: iacTypes.NewTestMetadata(),
-				RetentionPolicy: network.RetentionPolicy{
-					Metadata: iacTypes.NewTestMetadata(),
-					Enabled:  iacTypes.Bool(false, iacTypes.NewTestMetadata()),
-					Days:     iacTypes.Int(0, iacTypes.NewTestMetadata()),
-				},
+				RetentionPolicy: network.RetentionPolicy{},
 			},
 		},
 	}
@@ -179,6 +205,79 @@ func Test_adaptWatcherLog(t *testing.T) {
 			modules := tftestutil.CreateModulesFromSource(t, test.terraform, ".tf")
 			adapted := adaptWatcherLog(modules.GetBlocks()[0])
 			testutil.AssertDefsecEqual(t, test.expected, adapted)
+		})
+	}
+}
+
+func Test_AdaptNetworkInterface_AssociationSecurityGroup(t *testing.T) {
+	tests := []struct {
+		name      string
+		terraform string
+		expected  int
+	}{
+		{
+			name: "security group via association resource",
+			terraform: `
+resource "azurerm_network_security_group" "example" {
+	name = "example-nsg"
+}
+
+resource "azurerm_network_interface" "example" {
+	name                = "example-nic"
+	location            = "eastus"
+	resource_group_name = "example-rg"
+
+	ip_configuration {
+		name                          = "primary"
+		subnet_id                     = "subnet-primary-id"
+		private_ip_address_allocation = "Dynamic"
+	}
+}
+
+resource "azurerm_network_interface_security_group_association" "example" {
+	network_interface_id      = azurerm_network_interface.example.id
+	network_security_group_id = azurerm_network_security_group.example.id
+}
+`,
+			expected: 1,
+		},
+		{
+			name: "security group deduplicated when legacy and association both set",
+			terraform: `
+resource "azurerm_network_security_group" "example" {
+	name = "example-nsg"
+}
+
+resource "azurerm_network_interface" "example" {
+	name                      = "example-nic"
+	location                  = "eastus"
+	resource_group_name       = "example-rg"
+	network_security_group_id = azurerm_network_security_group.example.id
+
+	ip_configuration {
+		name                          = "primary"
+		subnet_id                     = "subnet-primary-id"
+		private_ip_address_allocation = "Dynamic"
+	}
+}
+
+resource "azurerm_network_interface_security_group_association" "example" {
+	network_interface_id      = azurerm_network_interface.example.id
+	network_security_group_id = azurerm_network_security_group.example.id
+}
+`,
+			expected: 1,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			modules := tftestutil.CreateModulesFromSource(t, test.terraform, ".tf")
+			nics := modules.GetResourcesByType("azurerm_network_interface")
+			require.Len(t, nics, 1)
+
+			adapted := AdaptNetworkInterface(nics[0], modules)
+			require.Len(t, adapted.SecurityGroups, test.expected)
 		})
 	}
 }

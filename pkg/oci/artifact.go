@@ -13,7 +13,6 @@ import (
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/go-containerregistry/pkg/v1/remote/transport"
 	"github.com/hashicorp/go-multierror"
-	"github.com/samber/lo"
 	"golang.org/x/xerrors"
 
 	"github.com/aquasecurity/trivy/pkg/downloader"
@@ -23,12 +22,16 @@ import (
 	"github.com/aquasecurity/trivy/pkg/version/doc"
 	xio "github.com/aquasecurity/trivy/pkg/x/io"
 	xos "github.com/aquasecurity/trivy/pkg/x/os"
+	xslices "github.com/aquasecurity/trivy/pkg/x/slices"
 )
 
 const (
 	// Artifact types
 	CycloneDXArtifactType = "application/vnd.cyclonedx+json"
 	SPDXArtifactType      = "application/spdx+json"
+
+	// Sigstore bundle artifact type for Cosign attestations in "new bundle format" > 2.5.0
+	SigstoreBundleArtifactType = "application/vnd.dev.sigstore.bundle.v0.3+json"
 
 	// Media types
 	OCIImageManifest = "application/vnd.oci.image.manifest.v1+json"
@@ -40,6 +43,7 @@ const (
 var SupportedSBOMArtifactTypes = []string{
 	CycloneDXArtifactType,
 	SPDXArtifactType,
+	SigstoreBundleArtifactType,
 }
 
 // Option is a functional option
@@ -215,11 +219,24 @@ func (a *Artifact) Digest(ctx context.Context) (string, error) {
 	return digest.String(), nil
 }
 
+func (a *Artifact) Manifest(ctx context.Context) (*v1.Manifest, error) {
+	if err := a.populate(ctx, a.RegistryOptions); err != nil {
+		return nil, err
+	}
+
+	manifest, err := a.image.Manifest()
+	if err != nil {
+		return nil, xerrors.Errorf("get manifest: %w", err)
+	}
+
+	return manifest, nil
+}
+
 type Artifacts []*Artifact
 
 // NewArtifacts returns a slice of artifacts.
 func NewArtifacts(repos []name.Reference, opt types.RegistryOptions, opts ...Option) Artifacts {
-	return lo.Map(repos, func(r name.Reference, _ int) *Artifact {
+	return xslices.Map(repos, func(r name.Reference) *Artifact {
 		return NewArtifact(r.String(), opt, opts...)
 	})
 }
@@ -258,8 +275,8 @@ func shouldTryOtherRepo(err error) bool {
 	for _, diagnostic := range terr.Errors {
 		// For better user experience
 		if diagnostic.Code == transport.DeniedErrorCode || diagnostic.Code == transport.UnauthorizedErrorCode {
-			// e.g. https://trivy.dev/docs/latest/references/troubleshooting/#db
-			log.Warnf("See %s", doc.URL("/docs/references/troubleshooting/", "db"))
+			// e.g. https://trivy.dev/docs/latest/guide/references/troubleshooting/#db
+			log.Warnf("See %s", doc.URL("guide/references/troubleshooting/", "db"))
 			break
 		}
 	}

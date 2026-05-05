@@ -29,11 +29,7 @@ resource "azurerm_managed_disk" "example" {
 	}
 }`,
 			expected: compute.ManagedDisk{
-				Metadata: iacTypes.NewTestMetadata(),
-				Encryption: compute.Encryption{
-					Metadata: iacTypes.NewTestMetadata(),
-					Enabled:  iacTypes.Bool(false, iacTypes.NewTestMetadata()),
-				},
+				Encryption: compute.Encryption{},
 			},
 		},
 		{
@@ -42,10 +38,8 @@ resource "azurerm_managed_disk" "example" {
 resource "azurerm_managed_disk" "example" {
 }`,
 			expected: compute.ManagedDisk{
-				Metadata: iacTypes.NewTestMetadata(),
 				Encryption: compute.Encryption{
-					Metadata: iacTypes.NewTestMetadata(),
-					Enabled:  iacTypes.Bool(true, iacTypes.NewTestMetadata()),
+					Enabled: iacTypes.BoolTest(true),
 				},
 			},
 		},
@@ -86,14 +80,9 @@ resource "azurerm_virtual_machine" "example" {
 }
 `,
 			expected: compute.LinuxVirtualMachine{
-				Metadata: iacTypes.NewTestMetadata(),
-				VirtualMachine: compute.VirtualMachine{
-					Metadata:   iacTypes.NewTestMetadata(),
-					CustomData: iacTypes.String("", iacTypes.NewTestMetadata()),
-				},
+				VirtualMachine: compute.VirtualMachine{},
 				OSProfileLinuxConfig: compute.OSProfileLinuxConfig{
-					Metadata:                      iacTypes.NewTestMetadata(),
-					DisablePasswordAuthentication: iacTypes.Bool(true, iacTypes.NewTestMetadata()),
+					DisablePasswordAuthentication: iacTypes.BoolTest(true),
 				},
 			},
 		},
@@ -112,17 +101,11 @@ export DATABASE_PASSWORD=\"SomeSortOfPassword\"
 	}
 }`,
 			expected: compute.LinuxVirtualMachine{
-				Metadata: iacTypes.NewTestMetadata(),
 				VirtualMachine: compute.VirtualMachine{
-					Metadata: iacTypes.NewTestMetadata(),
-					CustomData: iacTypes.String(
-						`export DATABASE_PASSWORD=\"SomeSortOfPassword\"
-`, iacTypes.NewTestMetadata()),
+					CustomData: iacTypes.StringTest(
+						"export DATABASE_PASSWORD=\\\"SomeSortOfPassword\\\"\n"),
 				},
-				OSProfileLinuxConfig: compute.OSProfileLinuxConfig{
-					Metadata:                      iacTypes.NewTestMetadata(),
-					DisablePasswordAuthentication: iacTypes.Bool(false, iacTypes.NewTestMetadata()),
-				},
+				OSProfileLinuxConfig: compute.OSProfileLinuxConfig{},
 			},
 		},
 		{
@@ -149,13 +132,6 @@ resource "azurerm_linux_virtual_machine" "example" {
 	}
 }
 
-resource "azurerm_public_ip" "example" {
-  name                = "acceptanceTestPublicIp1"
-  resource_group_name = azurerm_resource_group.example.name
-  location            = azurerm_resource_group.example.location
-  allocation_method   = "Static"
-}
-
 resource "azurerm_network_interface" "example" {
   name                = "example-nic"
   location            = azurerm_resource_group.example.location
@@ -163,7 +139,7 @@ resource "azurerm_network_interface" "example" {
 
   ip_configuration {
     name                 = "internal"
-		public_ip_address_id = azurerm_public_ip.example.id
+		public_ip_address_id = "test-public-ip-id"
   }
 
 	network_security_group_id = azurerm_network_security_group.example.id
@@ -188,15 +164,17 @@ resource "azurerm_network_security_group" "example" {
 }
 `,
 			expected: compute.LinuxVirtualMachine{
-				Metadata: iacTypes.NewTestMetadata(),
 				VirtualMachine: compute.VirtualMachine{
-					Metadata:   iacTypes.NewTestMetadata(),
-					CustomData: iacTypes.String("", iacTypes.NewTestMetadata()),
-					NetworkInterfaces: []compute.NetworkInterface{
+					NetworkInterfaces: []network.NetworkInterface{
 						{
-							Metadata:        iacTypes.NewTestMetadata(),
 							HasPublicIP:     iacTypes.BoolTest(true),
-							PublicIPAddress: iacTypes.String("", iacTypes.NewTestMetadata()),
+							PublicIPAddress: iacTypes.StringTest("test-public-ip-id"),
+							IPConfigurations: []network.IPConfiguration{
+								{
+									HasPublicIP:     iacTypes.BoolTest(true),
+									PublicIPAddress: iacTypes.StringTest("test-public-ip-id"),
+								},
+							},
 							SecurityGroups: []network.SecurityGroup{
 								{
 									Rules: []network.SecurityGroupRule{
@@ -215,8 +193,7 @@ resource "azurerm_network_security_group" "example" {
 					},
 				},
 				OSProfileLinuxConfig: compute.OSProfileLinuxConfig{
-					Metadata:                      iacTypes.NewTestMetadata(),
-					DisablePasswordAuthentication: iacTypes.Bool(true, iacTypes.NewTestMetadata()),
+					DisablePasswordAuthentication: iacTypes.BoolTest(true),
 				},
 			},
 		},
@@ -237,16 +214,11 @@ resource "azurerm_linux_virtual_machine" "example" {
 	}
 }`,
 			expected: compute.LinuxVirtualMachine{
-				Metadata: iacTypes.NewTestMetadata(),
 				VirtualMachine: compute.VirtualMachine{
-					Metadata:   iacTypes.NewTestMetadata(),
-					CustomData: iacTypes.String("", iacTypes.NewTestMetadata()),
 					// Empty array in Terraform is parsed as nil
-					NetworkInterfaces: nil,
 				},
 				OSProfileLinuxConfig: compute.OSProfileLinuxConfig{
-					Metadata:                      iacTypes.NewTestMetadata(),
-					DisablePasswordAuthentication: iacTypes.Bool(true, iacTypes.NewTestMetadata()),
+					DisablePasswordAuthentication: iacTypes.BoolTest(true),
 				},
 			},
 		},
@@ -281,11 +253,8 @@ export DATABASE_PASSWORD=\"SomeSortOfPassword\"
 	}
 }`,
 			expected: compute.WindowsVirtualMachine{
-				Metadata: iacTypes.NewTestMetadata(),
 				VirtualMachine: compute.VirtualMachine{
-					Metadata: iacTypes.NewTestMetadata(),
-					CustomData: iacTypes.String(`export DATABASE_PASSWORD=\"SomeSortOfPassword\"
-`, iacTypes.NewTestMetadata()),
+					CustomData: iacTypes.StringTest("export DATABASE_PASSWORD=\\\"SomeSortOfPassword\\\"\n"),
 				},
 			},
 		},
@@ -299,11 +268,8 @@ export GREETING="Hello there"
 	EOF
 	}`,
 			expected: compute.WindowsVirtualMachine{
-				Metadata: iacTypes.NewTestMetadata(),
 				VirtualMachine: compute.VirtualMachine{
-					Metadata: iacTypes.NewTestMetadata(),
-					CustomData: iacTypes.String(`export GREETING="Hello there"
-`, iacTypes.NewTestMetadata()),
+					CustomData: iacTypes.StringTest("export GREETING=\"Hello there\"\n"),
 				},
 			},
 		},
@@ -325,24 +291,94 @@ resource "azurerm_windows_virtual_machine" "example" {
 	}
 }`,
 			expected: compute.WindowsVirtualMachine{
-				Metadata: iacTypes.NewTestMetadata(),
 				VirtualMachine: compute.VirtualMachine{
-					Metadata:   iacTypes.NewTestMetadata(),
-					CustomData: iacTypes.String("", iacTypes.NewTestMetadata()),
-					NetworkInterfaces: []compute.NetworkInterface{
+					NetworkInterfaces: []network.NetworkInterface{
+						{},
+						{},
+					},
+				},
+			},
+		},
+		{
+			name: "with network interface security group association",
+			terraform: `
+resource "azurerm_windows_virtual_machine" "example" {
+	name                  = "example-machine"
+	resource_group_name   = "example-resources"
+	location              = "East US"
+	size                  = "Standard_F2"
+	network_interface_ids = [
+		azurerm_network_interface.example.id,
+	]
+	admin_username = "adminuser"
+	admin_password = "P@ssw0rd1234!"
+
+	os_disk {
+		caching              = "ReadWrite"
+		storage_account_type = "Standard_LRS"
+	}
+}
+
+resource "azurerm_network_interface" "example" {
+  name                = "example-nic"
+  location            = "eastus"
+  resource_group_name = "example-rg"
+
+  ip_configuration {
+    name                 = "internal"
+    public_ip_address_id = "test-public-ip-id"
+  }
+}
+
+resource "azurerm_network_security_group" "example" {
+  name                = "example-nsg"
+  location            = "eastus"
+  resource_group_name = "example-rg"
+
+  security_rule {
+    name                       = "test123"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_network_interface_security_group_association" "example" {
+	network_interface_id      = azurerm_network_interface.example.id
+	network_security_group_id = azurerm_network_security_group.example.id
+}
+`,
+			expected: compute.WindowsVirtualMachine{
+				VirtualMachine: compute.VirtualMachine{
+					NetworkInterfaces: []network.NetworkInterface{
 						{
-							Metadata:        iacTypes.NewTestMetadata(),
-							SubnetID:        iacTypes.String("", iacTypes.NewTestMetadata()),
-							SecurityGroups:  nil,
-							HasPublicIP:     iacTypes.Bool(false, iacTypes.NewTestMetadata()),
-							PublicIPAddress: iacTypes.String("", iacTypes.NewTestMetadata()),
-						},
-						{
-							Metadata:        iacTypes.NewTestMetadata(),
-							SubnetID:        iacTypes.String("", iacTypes.NewTestMetadata()),
-							SecurityGroups:  nil,
-							HasPublicIP:     iacTypes.Bool(false, iacTypes.NewTestMetadata()),
-							PublicIPAddress: iacTypes.String("", iacTypes.NewTestMetadata()),
+							HasPublicIP:     iacTypes.BoolTest(true),
+							PublicIPAddress: iacTypes.StringTest("test-public-ip-id"),
+							IPConfigurations: []network.IPConfiguration{
+								{
+									HasPublicIP:     iacTypes.BoolTest(true),
+									PublicIPAddress: iacTypes.StringTest("test-public-ip-id"),
+								},
+							},
+							SecurityGroups: []network.SecurityGroup{
+								{
+									Rules: []network.SecurityGroupRule{
+										{
+											Allow:                iacTypes.BoolTest(true),
+											Protocol:             iacTypes.StringTest("Tcp"),
+											DestinationAddresses: []iacTypes.StringValue{iacTypes.StringTest("*")},
+											DestinationPorts:     []common.PortRange{common.FullPortRange(iacTypes.NewTestMetadata())},
+											SourceAddresses:      []iacTypes.StringValue{iacTypes.StringTest("*")},
+											SourcePorts:          []common.PortRange{common.FullPortRange(iacTypes.NewTestMetadata())},
+										},
+									},
+								},
+							},
 						},
 					},
 				},
@@ -353,7 +389,9 @@ resource "azurerm_windows_virtual_machine" "example" {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			modules := tftestutil.CreateModulesFromSource(t, test.terraform, ".tf")
-			adapted := adaptWindowsVM(modules.GetBlocks()[0], modules)
+			resources := modules.GetResourcesByType("azurerm_windows_virtual_machine", AzureVirtualMachine)
+			require.NotEmpty(t, resources)
+			adapted := adaptWindowsVM(resources[0], modules)
 			testutil.AssertDefsecEqual(t, test.expected, adapted)
 		})
 	}

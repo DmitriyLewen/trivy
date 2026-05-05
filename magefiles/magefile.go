@@ -75,7 +75,7 @@ func (Tool) PipTools() error {
 
 // GolangciLint installs golangci-lint
 func (t Tool) GolangciLint() error {
-	const version = "v2.4.0"
+	const version = "v2.10.0"
 	bin := filepath.Join(GOBIN, "golangci-lint")
 	if exists(bin) && t.matchGolangciLintVersion(bin, version) {
 		return nil
@@ -252,10 +252,20 @@ func (t Test) K8s() error {
 		return fmt.Errorf("can't create environment for limited user: %w", err)
 	}
 
+	// wait for all pods are running correctly
+	err = sh.RunWithV(ENV, "kubectl", "wait", "--for=condition=Ready", "pod", "--all", "--all-namespaces", "--timeout=300s")
+	if err != nil {
+		return fmt.Errorf("can't wait for the pods: %w", err)
+	}
+
 	// print all resources for info
 	err = sh.RunWithV(ENV, "kubectl", "get", "all", "-A")
 	if err != nil {
-		return err
+		return fmt.Errorf("can't get workloads: %w", err)
+	}
+	err = sh.RunWithV(ENV, "kubectl", "get", "cm", "-A")
+	if err != nil {
+		return fmt.Errorf("can't get configmaps: %w", err)
 	}
 
 	return sh.RunWithV(ENV, "go", "test", "-v", "-tags=k8s_integration", "./integration/...")
@@ -330,7 +340,7 @@ func (t Test) UpdateVMGolden() error {
 
 // E2e runs E2E tests using testscript framework
 func (t Test) E2e() error {
-	return sh.RunWithV(ENV, "go", "test", "-v", "-tags=e2e", "./e2e/...")
+	return sh.RunWithV(ENV, "go", "test", "-v", "-tags=e2e", "-timeout=30m", "./e2e/...")
 }
 
 type Lint mg.Namespace
@@ -338,19 +348,13 @@ type Lint mg.Namespace
 // Run runs linters
 func (l Lint) Run() error {
 	mg.Deps(Tool{}.GolangciLint, Tool{}.Install)
-	if err := sh.RunWithV(ENV, "golangci-lint", "run", "--build-tags=integration"); err != nil {
-		return err
-	}
-	return sh.RunWithV(ENV, "modernize", "./...")
+	return sh.RunWithV(ENV, "golangci-lint", "run", "--build-tags=integration")
 }
 
 // Fix auto fixes linters
 func (l Lint) Fix() error {
 	mg.Deps(Tool{}.GolangciLint, Tool{}.Install)
-	if err := sh.RunWithV(ENV, "golangci-lint", "run", "--fix", "--build-tags=integration"); err != nil {
-		return err
-	}
-	return sh.RunWithV(ENV, "modernize", "-fix", "./...")
+	return sh.RunWithV(ENV, "golangci-lint", "run", "--fix", "--build-tags=integration")
 }
 
 // Fmt formats Go code
@@ -426,20 +430,6 @@ func Label() error {
 }
 
 type Docs mg.Namespace
-
-// Prepare CSS
-func (Docs) Css() error {
-	const (
-		homepageSass = "docs/assets/css/trivy_v1_styles.scss"
-	)
-	homepageCss := strings.TrimSuffix(homepageSass, ".scss") + ".min.css"
-	if updated, err := target.Path(homepageCss, homepageSass); err != nil {
-		return err
-	} else if !updated {
-		return nil
-	}
-	return sh.Run("sass", "--no-source-map", "--style=compressed", homepageSass, homepageCss)
-}
 
 // Prepare python requirements
 func (Docs) Pip() error {

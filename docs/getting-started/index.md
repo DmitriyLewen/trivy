@@ -60,11 +60,11 @@ For a more complete introduction, check out the basic Trivy Demo: <https://githu
 
 Now that you are up and ready, here are some resources to help you deepen your knowledge:
 
-- Learn more about Trivy's capabilities by exploring the complete [documentation](../docs/index.md).
+- Learn more about Trivy's capabilities by exploring the complete [documentation](../guide/index.md).
 - Explore community questions under [GitHub Discussions](https://github.com/aquasecurity/trivy/discussions).
 - Stay up to date by watching for [New Releases & Announcements](https://github.com/aquasecurity/trivy/discussions/categories/announcements).
 - Follow Trivy on Twitter/X: [@aquatrivy](https://x.com/aquatrivy)
-- Explore and subscribe to our YouTube channel [@AquaSecOSS](http://youtube.com/@aquasecoss)
+- Explore and subscribe to our YouTube channel [@AquaSecOSS](https://www.youtube.com/@AquaSecOSS)
 
 # Want more? Check out Aqua
 

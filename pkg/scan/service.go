@@ -11,10 +11,12 @@ import (
 	"github.com/aquasecurity/trivy/pkg/clock"
 	"github.com/aquasecurity/trivy/pkg/fanal/artifact"
 	ftypes "github.com/aquasecurity/trivy/pkg/fanal/types"
+	"github.com/aquasecurity/trivy/pkg/fingerprint"
 	"github.com/aquasecurity/trivy/pkg/log"
 	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/aquasecurity/trivy/pkg/types"
 	"github.com/aquasecurity/trivy/pkg/uuid"
+	"github.com/aquasecurity/trivy/pkg/version/app"
 )
 
 // Service is the main service that coordinates security scanning operations.
@@ -82,13 +84,17 @@ func (s Service) ScanArtifact(ctx context.Context, options types.ScanOptions) (t
 		return types.Report{}, xerrors.Errorf("failed to generate ReportID: %w", err)
 	}
 
-	return types.Report{
+	r := types.Report{
 		SchemaVersion: report.SchemaVersion,
-		ReportID:      reportID.String(),
-		CreatedAt:     clock.Now(ctx),
-		ArtifactID:    s.generateArtifactID(artifactInfo),
-		ArtifactName:  artifactInfo.Name,
-		ArtifactType:  artifactInfo.Type,
+		Trivy: types.TrivyInfo{
+			Version: app.Version(),
+			Server:  scanResponse.ServerInfo,
+		},
+		ReportID:     reportID.String(),
+		CreatedAt:    clock.Now(ctx),
+		ArtifactID:   s.generateArtifactID(artifactInfo),
+		ArtifactName: artifactInfo.Name,
+		ArtifactType: artifactInfo.Type,
 		Metadata: types.Metadata{
 			OS: ptros,
 
@@ -113,7 +119,12 @@ func (s Service) ScanArtifact(ctx context.Context, options types.ScanOptions) (t
 		},
 		Results: scanResponse.Results,
 		BOM:     artifactInfo.BOM,
-	}, nil
+	}
+
+	// Fill fingerprints for all findings
+	fingerprint.Fill(&r)
+
+	return r, nil
 }
 
 // generateArtifactID generates a unique ID for the artifact based on its type

@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -17,14 +19,13 @@ import (
 	"time"
 
 	cdx "github.com/CycloneDX/cyclonedx-go"
-	"github.com/samber/lo"
+	"github.com/google/jsonschema-go/jsonschema"
 	spdxjson "github.com/spdx/tools-golang/json"
 	"github.com/spdx/tools-golang/spdx"
 	"github.com/spdx/tools-golang/spdxlib"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/xeipuuv/gojsonschema"
 
 	"github.com/aquasecurity/trivy-db/pkg/metadata"
 	"github.com/aquasecurity/trivy/internal/dbtest"
@@ -124,6 +125,7 @@ const (
 	goldenPipenv                                 = "testdata/pipenv.json.golden"
 	goldenPnpm                                   = "testdata/pnpm.json.golden"
 	goldenPoetry                                 = "testdata/poetry.json.golden"
+	goldenPyLock                                 = "testdata/pylock.json.golden"
 	goldenPomCycloneDX                           = "testdata/pom-cyclonedx.json.golden"
 	goldenPubspecLock                            = "testdata/pubspec.lock.json.golden"
 	goldenSBT                                    = "testdata/sbt.json.golden"
@@ -454,18 +456,44 @@ func compareSPDXJson(t *testing.T, wantFile, gotFile string) {
 	validateReport(t, fmt.Sprintf(SPDXSchema, SPDXVersion), got)
 }
 
-func validateReport(t *testing.T, schema string, report any) {
-	schemaLoader := gojsonschema.NewReferenceLoader(schema)
-	documentLoader := gojsonschema.NewGoLoader(report)
-	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+func validateReport(t *testing.T, schemaURL string, report any) {
+	t.Helper()
+
+	fetchSchema := func(u *url.URL) (*jsonschema.Schema, error) {
+		resp, err := http.Get(u.String())
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			return nil, fmt.Errorf("unexpected status %d fetching schema %s", resp.StatusCode, u)
+		}
+		var s jsonschema.Schema
+		if err := json.NewDecoder(resp.Body).Decode(&s); err != nil {
+			return nil, err
+		}
+		return &s, nil
+	}
+
+	u, err := url.Parse(schemaURL)
 	require.NoError(t, err)
 
-	if valid := result.Valid(); !valid {
-		errs := lo.Map(result.Errors(), func(err gojsonschema.ResultError, _ int) string {
-			return err.String()
-		})
-		assert.True(t, valid, strings.Join(errs, "\n"))
-	}
+	s, err := fetchSchema(u)
+	require.NoError(t, err)
+
+	resolved, err := s.Resolve(&jsonschema.ResolveOptions{
+		BaseURI: schemaURL,
+		Loader:  fetchSchema,
+	})
+	require.NoError(t, err)
+
+	// Convert report to JSON-compatible map via JSON round-trip
+	b, err := json.Marshal(report)
+	require.NoError(t, err)
+	var instance any
+	require.NoError(t, json.Unmarshal(b, &instance))
+
+	require.NoError(t, resolved.Validate(instance))
 }
 
 func overrideFuncs(funcs ...OverrideFunc) OverrideFunc {
@@ -498,8 +526,27 @@ func overrideUID(t *testing.T, want, got *types.Report) {
 	}
 }
 
+// overrideFingerprint only checks for the presence of the fingerprint and clears it;
+// the fingerprint is calculated from artifactID, target, pkgID, and vulnerabilityID,
+// but may not match as the artifactID can vary depending on the scanning context.
+func overrideFingerprint(t *testing.T, want, got *types.Report) {
+	for i, result := range got.Results {
+		for j, vuln := range result.Vulnerabilities {
+			assert.NotEmptyf(t, vuln.Fingerprint, "Fingerprint is empty: %s", vuln.VulnerabilityID)
+			assert.Lenf(t, vuln.Fingerprint, 71, "Fingerprint should be 71 characters (sha256: + 64 hex chars): %s", vuln.VulnerabilityID)
+			// Do not compare Fingerprint as the artifactID varies between tests
+			got.Results[i].Vulnerabilities[j].Fingerprint = ""
+		}
+	}
+	for i, result := range want.Results {
+		for j := range result.Vulnerabilities {
+			want.Results[i].Vulnerabilities[j].Fingerprint = ""
+		}
+	}
+}
+
 // overrideDockerRemovedFields clears image config fields that were removed from Docker API
-// cf. https://github.com/moby/moby/blob/d0ad1357a141c795e1e0490e3fed00ddabcb91b9/docs/api/version-history.md
+// cf. https://github.com/moby/moby/blob/1f71f2217d2196239ca52685ce6b3c4f93a1cc07/api/docs/CHANGELOG.md
 func overrideDockerRemovedFields(_ *testing.T, want, got *types.Report) {
 	// Clear Container field (removed in Docker API v1.45)
 	got.Metadata.ImageConfig.Container = ""
@@ -512,4 +559,20 @@ func overrideDockerRemovedFields(_ *testing.T, want, got *types.Report) {
 	// Clear Hostname field (removed in Docker API v1.50)
 	got.Metadata.ImageConfig.Config.Hostname = ""
 	want.Metadata.ImageConfig.Config.Hostname = ""
+
+	// Clear DockerVersion field (omitted in Docker API v1.52)
+	want.Metadata.ImageConfig.DockerVersion = ""
+}
+
+// overrideServerInfo verifies that Server info exists and then clears it.
+// Server info is only populated in client/server mode (empty in standalone mode).
+// When golden files are shared with standalone tests, this override is needed
+// because standalone tests don't produce server info.
+func overrideServerInfo(t *testing.T, want, got *types.Report) {
+	// Verify that server info was actually fetched
+	assert.NotEmpty(t, got.Trivy.Server.Version, "Server version should be set in client/server mode")
+
+	// Clear server info for comparison with shared golden files
+	got.Trivy.Server = types.VersionInfo{}
+	want.Trivy.Server = types.VersionInfo{}
 }
