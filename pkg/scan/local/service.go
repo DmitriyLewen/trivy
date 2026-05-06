@@ -97,7 +97,7 @@ func (s Service) Scan(ctx context.Context, targetName, artifactKey string, blobK
 		lom.Map(detail.Packages, func(pkg ftypes.Package) ftypes.Package {
 			p, pErr := purl.New(detail.OS.Family, types.Metadata{OS: &detail.OS}, pkg)
 			if pErr != nil {
-				log.Error("Failed to create PackageURL", log.Err(err))
+				log.Error("Failed to create PackageURL", log.Err(pErr))
 				return pkg
 			}
 
