@@ -25,9 +25,19 @@ jobs:
     needs: release # run this job after 'release' job completes
     runs-on: ubuntu-2404-2core
     steps:
+      # GITHUB_TOKEN is scoped to the current repository and cannot trigger
+      # workflows in other repos — generate a GitHub App installation token instead.
+      - name: Generate token
+        id: app-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          app-id: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_APP_ID }}
+          private-key: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: trivy-repo
       - name: Trigger deploy-packages workflow in trivy-repo
         env:
-          GH_TOKEN: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run deploy-packages.yml \
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-repo" \
@@ -68,12 +78,24 @@ jobs:
     needs: release
     runs-on: ubuntu-2404-2core
     steps:
+      # GITHUB_TOKEN is scoped to the current repository and cannot trigger
+      # workflows in other repos — generate a GitHub App installation token instead.
+      - name: Generate token
+        id: app-token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        with:
+          app-id: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_APP_ID }}
+          private-key: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            trivy-telemetry
+            trivy-downloads
+            trivy-chocolatey
+            trivy-action
       - name: Trigger update_version workflow in trivy-telemetry
         if: always()
         env:
-          # Use TRIVY_WORKFLOW_TRIGGER_TOKEN instead of GITHUB_TOKEN
-          # This allows triggering workflows in other repositories
-          GH_TOKEN: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run update_version.yml \
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-telemetry" \
@@ -83,9 +105,7 @@ jobs:
       - name: Trigger update_version workflow in trivy-downloads
         if: always()
         env:
-          # Use TRIVY_WORKFLOW_TRIGGER_TOKEN instead of GITHUB_TOKEN
-          # This allows triggering workflows in other repositories
-          GH_TOKEN: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run update_version.yml \
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-downloads" \
@@ -96,9 +116,7 @@ jobs:
       - name: Trigger version update and release workflow in trivy-chocolatey
         if: always()
         env:
-          # Use TRIVY_WORKFLOW_TRIGGER_TOKEN instead of GITHUB_TOKEN
-          # This allows triggering workflows in other repositories
-          GH_TOKEN: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh workflow run release.yml \
             --repo "$GITHUB_REPOSITORY_OWNER/trivy-chocolatey" \
@@ -108,9 +126,7 @@ jobs:
       - name: Run version bump in trivy-action
         if: always()
         env:
-          # Use TRIVY_WORKFLOW_TRIGGER_TOKEN instead of GITHUB_TOKEN
-          # This allows triggering workflows in other repositories
-          GH_TOKEN: ${{ secrets.TRIVY_WORKFLOW_TRIGGER_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           gh workflow run bump-trivy.yaml \
