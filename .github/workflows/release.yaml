@@ -12,10 +12,6 @@ jobs:
       goreleaser_config: goreleaser.yml
       goreleaser_options: '--clean --timeout 90m'
     secrets:
-      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-      ECR_ACCESS_KEY_ID: ${{ secrets.ECR_ACCESS_KEY_ID }}
-      ECR_SECRET_ACCESS_KEY: ${{ secrets.ECR_SECRET_ACCESS_KEY }}
       GPG_KEY: ${{ secrets.GPG_KEY }}
       GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
