@@ -104,7 +104,6 @@ func (s Service) Scan(ctx context.Context, targetName, artifactKey string, blobK
 			}
 			detail.Packages[i].Identifier.PURL = p.Unwrap()
 		}
-
 	}
 
 	target := types.ScanTarget{
