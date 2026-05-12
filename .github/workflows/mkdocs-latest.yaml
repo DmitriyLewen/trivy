@@ -11,7 +11,7 @@ on:
 jobs:
   deploy:
     name: Deploy the latest documentation
-    runs-on: ubuntu-2404-2core
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout main
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -43,7 +43,7 @@ jobs:
   # This workflow is used to trigger the trivy-www deployment
   trigger-trivy-www-deploy:
     needs: deploy
-    runs-on: ubuntu-2404-2core
+    runs-on: ubuntu-latest
     steps:
       # GITHUB_TOKEN is scoped to the current repository and cannot trigger
       # workflows in other repos — generate a GitHub App installation token instead.
