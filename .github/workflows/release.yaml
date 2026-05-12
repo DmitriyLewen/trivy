@@ -18,7 +18,7 @@ jobs:
   deploy-packages:
     name: Deploy rpm/deb packages
     needs: release # run this job after 'release' job completes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # GITHUB_TOKEN is scoped to the current repository and cannot trigger
       # workflows in other repos — generate a GitHub App installation token instead.
@@ -42,7 +42,7 @@ jobs:
   # `update-chart-version` creates a new PR for updating the helm chart
   update-chart-version:
     needs: release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # GITHUB_TOKEN cannot trigger workflows on PRs it creates, so the chart
       # version PR would not run CI — generate a GitHub App installation token instead.
@@ -79,7 +79,7 @@ jobs:
   # `trigger-version-update` triggers workflows in the `aqua` repositories to update the Trivy version.
   trigger-version-update:
     needs: release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # GITHUB_TOKEN is scoped to the current repository and cannot trigger
       # workflows in other repos — generate a GitHub App installation token instead.
