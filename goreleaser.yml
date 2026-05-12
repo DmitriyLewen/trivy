@@ -83,8 +83,8 @@ archives:
 
 dockers:
   - image_templates:
-      - "ghcr.io/DmitriyLewen/trivy:{{ .Version }}-amd64"
-      - "ghcr.io/DmitriyLewen/trivy:latest-amd64"
+      - "ghcr.io/dmitriylewen/trivy:{{ .Version }}-amd64"
+      - "ghcr.io/dmitriylewen/trivy:latest-amd64"
     use: buildx
     goos: linux
     goarch: amd64
@@ -104,8 +104,8 @@ dockers:
     extra_files:
     - contrib/
   - image_templates:
-      - "ghcr.io/DmitriyLewen/trivy:{{ .Version }}-arm64"
-      - "ghcr.io/DmitriyLewen/trivy:latest-arm64"
+      - "ghcr.io/dmitriylewen/trivy:{{ .Version }}-arm64"
+      - "ghcr.io/dmitriylewen/trivy:latest-arm64"
     use: buildx
     goos: linux
     goarch: arm64
@@ -126,14 +126,14 @@ dockers:
     - contrib/
 
 docker_manifests:
-  - name_template: 'ghcr.io/DmitriyLewen/trivy:{{ .Version }}'
+  - name_template: 'ghcr.io/dmitriylewen/trivy:{{ .Version }}'
     image_templates:
-    - 'ghcr.io/DmitriyLewen/trivy:{{ .Version }}-amd64'
-    - 'ghcr.io/DmitriyLewen/trivy:{{ .Version }}-arm64'
-  - name_template: 'ghcr.io/DmitriyLewen/trivy:latest'
+    - 'ghcr.io/dmitriylewen/trivy:{{ .Version }}-amd64'
+    - 'ghcr.io/dmitriylewen/trivy:{{ .Version }}-arm64'
+  - name_template: 'ghcr.io/dmitriylewen/trivy:latest'
     image_templates:
-    - 'ghcr.io/DmitriyLewen/trivy:{{ .Version }}-amd64'
-    - 'ghcr.io/DmitriyLewen/trivy:{{ .Version }}-arm64'
+    - 'ghcr.io/dmitriylewen/trivy:{{ .Version }}-amd64'
+    - 'ghcr.io/dmitriylewen/trivy:{{ .Version }}-arm64'
 
 signs:
 - cmd: cosign
