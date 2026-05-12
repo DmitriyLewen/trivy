@@ -99,6 +99,9 @@ func (s Service) Scan(ctx context.Context, targetName, artifactKey string, blobK
 				log.Error("Failed to create PackageURL", log.Err(err))
 				continue
 			}
+			if p == nil {
+				continue
+			}
 			detail.Packages[i].Identifier.PURL = p.Unwrap()
 		}
 
