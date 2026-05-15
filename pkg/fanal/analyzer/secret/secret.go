@@ -22,7 +22,7 @@ import (
 // To make sure SecretAnalyzer implements analyzer.Initializer
 var _ analyzer.Initializer = &SecretAnalyzer{}
 
-const version = 1
+const version = 2
 
 var (
 	skipFiles = []string{
@@ -164,9 +164,15 @@ func (a *SecretAnalyzer) Required(filePath string, fi os.FileInfo) bool {
 		return false
 	}
 
-	// Skip the config file for secret scanning
-	if filepath.Base(a.configPath) == filePath {
-		return false
+	// Skip the secret-scanner config file itself.
+	// filePath is scan-relative and slash-normalized by the walker; configPath comes from the
+	// --secret-config flag verbatim and may contain native separators, so normalize both.
+	if a.configPath != "" {
+		cleanFile := filepath.ToSlash(filepath.Clean(filePath))
+		cleanConfig := filepath.ToSlash(filepath.Clean(a.configPath))
+		if cleanConfig == cleanFile {
+			return false
+		}
 	}
 
 	// Check if the file extension should be skipped
