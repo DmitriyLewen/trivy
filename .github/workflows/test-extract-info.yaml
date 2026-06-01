@@ -1,0 +1,40 @@
+name: Test Extract Info (TEMP)
+
+# Isolated test of the `extract_info` step from release-please.yaml.
+# Contains ONLY the parsing step — no token generation, no tagging, no branch
+# creation, no label removal. Safe to run on the fork. Delete after testing.
+
+on:
+  push:
+    branches:
+      - 'test/extract-info'
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version and PR number from commit message
+        id: extract_info
+        shell: bash
+        env:
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          # Take only the first line to avoid git trailers (e.g. Co-authored-by) breaking $GITHUB_OUTPUT
+          FIRST_LINE=${COMMIT_MESSAGE%%$'\n'*}
+          echo "version=$( echo "$FIRST_LINE" | sed 's/^release: v\([0-9]\+\.[0-9]\+\.[0-9]\+\).*$/\1/' )" >> $GITHUB_OUTPUT
+          echo "pr_number=$( echo "$FIRST_LINE" | sed 's/.*(\#\([0-9]\+\)).*$/\1/' )" >> $GITHUB_OUTPUT
+          echo "release_branch=release/v$( echo "$FIRST_LINE" | sed 's/^release: v\([0-9]\+\.[0-9]\+\).*$/\1/' )" >> $GITHUB_OUTPUT
+
+      - name: Print parsed outputs
+        env:
+          RAW_MESSAGE: ${{ github.event.head_commit.message }}
+          VERSION: ${{ steps.extract_info.outputs.version }}
+          PR_NUMBER: ${{ steps.extract_info.outputs.pr_number }}
+          RELEASE_BRANCH: ${{ steps.extract_info.outputs.release_branch }}
+        run: |
+          echo "===== raw commit message (between markers) ====="
+          echo ">>>${RAW_MESSAGE}<<<"
+          echo "===== parsed outputs ====="
+          echo "version        = '${VERSION}'"
+          echo "pr_number      = '${PR_NUMBER}'"
+          echo "release_branch = '${RELEASE_BRANCH}'"
