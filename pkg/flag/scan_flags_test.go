@@ -20,6 +20,7 @@ func TestScanFlagGroup_ToOptions(t *testing.T) {
 		scanners         string
 		distro           string
 		skipVersionCheck bool
+		mavenMirrors     map[string][]string
 	}
 	tests := []struct {
 		name      string
@@ -138,6 +139,29 @@ func TestScanFlagGroup_ToOptions(t *testing.T) {
 			},
 			assertion: require.NoError,
 		},
+		{
+			name: "maven mirrors from config file reach ScanOptions",
+			fields: fields{
+				mavenMirrors: map[string][]string{
+					"https://repo.maven.apache.org/maven2/": {"https://my-internal-mirror/maven2/"},
+				},
+			},
+			want: flag.ScanOptions{
+				MavenMirrors: map[string][]string{
+					"https://repo.maven.apache.org/maven2/": {"https://my-internal-mirror/maven2/"},
+				},
+			},
+			assertion: require.NoError,
+		},
+		{
+			name: "unparsable maven mirror URL is rejected (fail-fast)",
+			fields: fields{
+				mavenMirrors: map[string][]string{
+					"https://repo.maven.apache.org/maven2/": {"http://[::1"},
+				},
+			},
+			assertion: require.Error,
+		},
 	}
 
 	for _, tt := range tests {
@@ -149,6 +173,9 @@ func TestScanFlagGroup_ToOptions(t *testing.T) {
 			setValue(flag.ScannersFlag.ConfigName, tt.fields.scanners)
 			setValue(flag.DistroFlag.ConfigName, tt.fields.distro)
 			setValue(flag.SkipVersionCheckFlag.ConfigName, tt.fields.skipVersionCheck)
+			if len(tt.fields.mavenMirrors) > 0 {
+				viper.Set(flag.MavenMirrorsFlag.ConfigName, tt.fields.mavenMirrors)
+			}
 
 			// Assert options
 			f := &flag.ScanFlagGroup{
@@ -158,6 +185,7 @@ func TestScanFlagGroup_ToOptions(t *testing.T) {
 				Scanners:         flag.ScannersFlag.Clone(),
 				DistroFlag:       flag.DistroFlag.Clone(),
 				SkipVersionCheck: flag.SkipVersionCheckFlag.Clone(),
+				MavenMirrors:     flag.MavenMirrorsFlag.Clone(),
 			}
 
 			flags := flag.Flags{f}

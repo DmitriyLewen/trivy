@@ -1,6 +1,7 @@
 package flag
 
 import (
+	"net/url"
 	"runtime"
 	"slices"
 	"strings"
@@ -135,6 +136,10 @@ var (
 		ConfigName: "scan.disable-telemetry",
 		Usage:      "disable sending anonymous usage data to Aqua",
 	}
+	MavenMirrorsFlag = Flag[map[string][]string]{
+		ConfigName: "scan.maven.mirrors",
+		Usage:      "map of Maven repository URLs and an ordered list of mirrors that serve each of them.",
+	}
 )
 
 type ScanFlagGroup struct {
@@ -151,6 +156,7 @@ type ScanFlagGroup struct {
 	DistroFlag        *Flag[string]
 	SkipVersionCheck  *Flag[bool]
 	DisableTelemetry  *Flag[bool]
+	MavenMirrors      *Flag[map[string][]string]
 }
 
 type ScanOptions struct {
@@ -167,6 +173,10 @@ type ScanOptions struct {
 	Distro            ftypes.OS
 	SkipVersionCheck  bool
 	DisableTelemetry  bool
+	// MavenMirrors maps a Maven repository URL to an ordered list of mirror URLs
+	// that serve it (tried in order as fallbacks). It is applied by the pom parser
+	// as the lowest-priority mirrors, on top of the mirrors from settings.xml.
+	MavenMirrors map[string][]string
 }
 
 func NewScanFlagGroup() *ScanFlagGroup {
@@ -184,6 +194,7 @@ func NewScanFlagGroup() *ScanFlagGroup {
 		DistroFlag:        DistroFlag.Clone(),
 		SkipVersionCheck:  SkipVersionCheckFlag.Clone(),
 		DisableTelemetry:  DisableTelemetryFlag.Clone(),
+		MavenMirrors:      MavenMirrorsFlag.Clone(),
 	}
 }
 
@@ -206,6 +217,7 @@ func (f *ScanFlagGroup) Flags() []Flagger {
 		f.DistroFlag,
 		f.SkipVersionCheck,
 		f.DisableTelemetry,
+		f.MavenMirrors,
 	}
 }
 
@@ -233,6 +245,14 @@ func (f *ScanFlagGroup) ToOptions(opts *Options) error {
 		}
 	}
 
+	var mavenMirrors map[string][]string
+	if f.MavenMirrors != nil {
+		var err error
+		if mavenMirrors, err = validateMavenMirrors(f.MavenMirrors.Value()); err != nil {
+			return err
+		}
+	}
+
 	opts.ScanOptions = ScanOptions{
 		Target:            target,
 		SkipDirs:          f.SkipDirs.Value(),
@@ -247,6 +267,28 @@ func (f *ScanFlagGroup) ToOptions(opts *Options) error {
 		Distro:            distro,
 		SkipVersionCheck:  f.SkipVersionCheck.Value(),
 		DisableTelemetry:  f.DisableTelemetry.Value(),
+		MavenMirrors:      mavenMirrors,
 	}
 	return nil
+}
+
+// validateMavenMirrors parses and validates the Maven mirror URLs configured via
+// scan.maven.mirrors. Unlike RegistryMirrorsFlag (no validation) and the pom
+// parser's resolveMirrors (silently drops bad URLs), an unparsable URL here is a
+// configuration error the user must learn about at startup (fail-fast).
+// The returned map is the input unchanged; the function only validates.
+func validateMavenMirrors(mirrors map[string][]string) (map[string][]string, error) {
+	for src, targets := range mirrors {
+		// The key is a plain repository URL (no credentials), so it is safe to echo.
+		if _, err := url.Parse(src); err != nil {
+			return nil, xerrors.Errorf("invalid Maven repository URL %q in 'scan.maven.mirrors'", src)
+		}
+		// A mirror URL may carry userinfo, so report only which key it belongs to.
+		for _, target := range targets {
+			if _, err := url.Parse(target); err != nil {
+				return nil, xerrors.Errorf("one of the mirror URLs for repository %q in 'scan.maven.mirrors' is invalid", src)
+			}
+		}
+	}
+	return mirrors, nil
 }
