@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/aquasecurity/trivy/pkg/log"
+	"github.com/samber/lo"
 )
 
 // mirror is the runtime representation of a <mirror> from settings.xml.
@@ -17,14 +18,21 @@ type mirror struct {
 	url      url.URL  // parsed URL with userinfo from the matching <server>
 }
 
-// resolveMirrors converts <mirror> entries from settings.xml into the runtime
-// mirror form: split and trim the mirrorOf patterns, parse the URL, and embed
-// credentials from the <server> whose id equals the mirror id. Mirrors with
-// no usable pattern or an unparsable URL are dropped.
-func resolveMirrors(mirrors []Mirror, servers []Server) []mirror {
+// mirrors holds the two mirror sources the parser applies.
+type mirrors struct {
+	settings   []mirror             // settings.xml mirrors
+	configFile map[string][]url.URL // scan.maven.mirrors; key: mirrorKey(source), value: ordered parsed mirror URLs (fallbacks)
+}
+
+// resolveMirrors resolves and validates both mirror sources into their runtime form:
+// it parses every URL — embedding <server> credentials into settings.xml mirrors and
+// normalizing config-file keys via mirrorKey — and drops any entry with an unusable
+// pattern or an unparsable URL.
+func resolveMirrors(settingsMirrors []Mirror, servers []Server, configFileMirrors map[string][]string) mirrors {
 	logger := log.WithPrefix("pom")
-	var result []mirror
-	for _, m := range mirrors {
+
+	var resolved mirrors
+	for _, m := range settingsMirrors {
 		var patterns []string
 		for p := range strings.SplitSeq(m.MirrorOf, ",") {
 			p = strings.TrimSpace(p)
@@ -55,13 +63,52 @@ func resolveMirrors(mirrors []Mirror, servers []Server) []mirror {
 		}
 
 		logger.Debug("Adding mirror", log.String("id", m.ID), log.String("url", u.Redacted()))
-		result = append(result, mirror{
+		resolved.settings = append(resolved.settings, mirror{
 			id:       m.ID,
 			patterns: patterns,
 			url:      *u,
 		})
 	}
-	return result
+
+	for src, targets := range configFileMirrors {
+		srcURL, err := url.Parse(src)
+		if err != nil {
+			// Don't log the raw URL: it may carry userinfo. Parsing failed, so
+			// there is no parsed URL to Redacted(); log without the value.
+			logger.Debug("Unable to parse config-file mirror source url")
+			continue
+		}
+
+		var mirrorURLs []url.URL
+		for _, target := range targets {
+			mirrorURL, err := url.Parse(target)
+			if err != nil {
+				logger.Debug("Unable to parse config-file mirror url", log.String("source", srcURL.Redacted()))
+				continue
+			}
+			mirrorURLs = append(mirrorURLs, *mirrorURL)
+		}
+		if len(mirrorURLs) == 0 {
+			continue
+		}
+		logger.Debug("Added config-file mirror", log.String("source", srcURL.Redacted()),
+			log.Any("mirrors", lo.Map(mirrorURLs, func(u url.URL, _ int) string {
+				return u.Redacted()
+			})))
+		if resolved.configFile == nil {
+			resolved.configFile = make(map[string][]url.URL)
+		}
+		resolved.configFile[mirrorKey(*srcURL)] = mirrorURLs
+	}
+
+	return resolved
+}
+
+// mirrorKey normalizes a repository URL to the key used for config-file mirror
+// lookup: its string form with any trailing slash trimmed, so that
+// "https://host/maven2/" and "https://host/maven2" resolve to the same key.
+func mirrorKey(u url.URL) string {
+	return strings.TrimRight(u.String(), "/")
 }
 
 // matches reports whether this mirror should serve the given repository.
