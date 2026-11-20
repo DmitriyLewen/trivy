@@ -1,1 +1,0 @@
-fixture bp-test-b1
