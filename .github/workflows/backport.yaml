@@ -7,7 +7,7 @@ on:
 jobs:
   check_permission:
     name: Check comment author permissions
-    runs-on: ubuntu-2404-2core
+    runs-on: ubuntu-latest
     outputs:
       is_maintainer: ${{ steps.check_permission.outputs.is_maintainer }}
     steps:
@@ -32,7 +32,7 @@ jobs:
       github.event.issue.pull_request &&
       github.event.issue.pull_request.merged_at != null &&
       startsWith(github.event.comment.body, '@aqua-bot backport release/')
-    runs-on: ubuntu-2404-2core
+    runs-on: ubuntu-latest
     steps:
       # GITHUB_TOKEN cannot trigger workflows on PRs it creates, so the backport
       # PR would not run CI — generate a GitHub App installation token instead.
