@@ -18,10 +18,7 @@ on:
 jobs:
   backport:
     name: Backport PR
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
+    runs-on: ubuntu-2404-2core
     steps:
       - name: Validate inputs
         env:
@@ -39,12 +36,23 @@ jobs:
             exit 1
           fi
 
+      # GITHUB_TOKEN cannot trigger workflows on PRs it creates, so the backport
+      # PR would not run CI — generate a GitHub App installation token instead.
+      - name: Generate token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.REPO_TRIVY_WRITE_GH_APP_CLIENT_ID }}
+          private-key: ${{ secrets.REPO_TRIVY_WRITE_GH_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: true # backport.sh runs git push
-          token: ${{ github.token }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Set up Git user
         run: |
@@ -53,7 +61,7 @@ jobs:
 
       - name: Run backport script
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ inputs.pr-number }}
           BRANCH_NAME: ${{ inputs.branch }}
         run: ./misc/backport/backport.sh "$BRANCH_NAME" "$PR_NUMBER"
